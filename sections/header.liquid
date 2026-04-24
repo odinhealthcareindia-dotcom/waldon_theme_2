@@ -22,7 +22,8 @@
         style="--logo-h: {{ logo_h }}px; --logo-h-m: {{ logo_h_m }}px; --logo-w: {{ logo_w }}px; --logo-w-m: {{ logo_w_m }}px;"
         loading="eager">
     {%- else -%}
-      {{ shop.name }}<span class="wd-nav-dot"></span>
+      {% comment %} {{ shop.name }} {% endcomment %}
+      Waldon<span class="wd-nav-dot"></span>
     {%- endif -%}
   </a>
 
