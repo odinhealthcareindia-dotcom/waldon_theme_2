@@ -1,0 +1,130 @@
+{%- if section.settings.show_section -%}
+<section class="sz-section section--size-guide" id="size-guide" style="background: {{ section.settings.bg_color }};">
+  <div class="sz-inner">
+    <p class="sz-eyebrow">{{ section.settings.eyebrow }}</p>
+    <h2 class="sz-title">{{ section.settings.heading }}</h2>
+    {%- if section.settings.intro != blank -%}
+      <div class="sz-intro">{{ section.settings.intro }}</div>
+    {%- endif -%}
+
+    <div class="sz-table">
+      <div class="sz-row sz-row--head">
+        <span>Size</span>
+        <span>Thigh circumference</span>
+        <span>Fits</span>
+      </div>
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'size_row' -%}
+          <div class="sz-row{% if block.settings.highlight %} sz-row--highlight{% endif %}" {{ block.shopify_attributes }}>
+            <b>{{ block.settings.size }}</b>
+            <span>{{ block.settings.range }}</span>
+            <span>
+              {%- if block.settings.fits_note != blank -%}
+                {{ block.settings.fits_note }}
+              {%- else -%}
+                —
+              {%- endif -%}
+            </span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.tip_text != blank -%}
+      <div class="sz-tip">
+        <span class="sz-tip__icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="ruler" aria-hidden="true" class="lucide lucide-ruler"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"></path><path d="m14.5 12.5 2-2"></path><path d="m11.5 9.5 2-2"></path><path d="m8.5 6.5 2-2"></path><path d="m17.5 15.5 2-2"></path></svg>
+        </span>
+        <div class="sz-tip__text">{{ section.settings.tip_text }}</div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.section--size-guide { border-bottom: 1px solid var(--stone-01); }
+.sz-inner {
+  max-width: 640px; margin: 0 auto;
+  padding: 48px 18px;
+}
+@media (min-width: 768px) { .sz-inner { padding: 72px 48px; } }
+
+.sz-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-muted); margin: 0 0 12px; font-weight: 500;
+}
+.sz-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(24px,5vw,34px); line-height: 1.08; letter-spacing: -0.022em;
+  color: var(--ink-00); margin: 0 0 14px;
+}
+.sz-title p {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 30px; line-height: 1.08; letter-spacing: -0.022em;
+  color: var(--ink-00); margin: 0;
+}
+.sz-title em { font-style: italic; font-weight: 300; color: var(--clay-500); }
+.sz-intro { font-size: 15px; line-height: 1.55; color: var(--fg-body); margin: 0 0 24px; }
+.sz-intro p { margin: 0; }
+
+.sz-table {
+  background: var(--paper-00); border: 1px solid var(--stone-01);
+  border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px;
+}
+.sz-row {
+  display: grid; grid-template-columns: 1fr 2fr 1fr;
+  padding: 11px 14px; font-size: 13px; color: var(--ink-00);
+  border-bottom: 1px solid var(--stone-01); align-items: center;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 11.5;
+}
+.sz-row:last-child { border-bottom: 0; }
+.sz-row b { font-weight: 500; }
+.sz-row--head {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--fg-muted); font-weight: 500;
+  background: var(--paper-01);
+}
+.sz-row--highlight { background: var(--clay-50); }
+
+.sz-tip {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--paper-01); border: 1px solid var(--stone-01);
+  border-radius: var(--radius-lg); padding: 14px 16px;
+}
+.sz-tip__icon { color: var(--clay-500); flex: none; margin-top: 1px; }
+.sz-tip__text { font-size: 13.5px; color: var(--fg-body); line-height: 1.5; }
+.sz-tip__text p { margin: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Size guide",
+  "tag": "section",
+  "class": "section section--size-guide",
+  "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show section", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#FBF9F4" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Sizing" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Find your <em>fit.</em></p>" },
+    { "type": "richtext", "id": "intro", "label": "Intro paragraph", "default": "<p>Measure the circumference of your thigh, 4 inches above the center of your kneecap. Between sizes? Size down for firmer compression.</p>" },
+    { "type": "richtext", "id": "tip_text", "label": "Tip text", "default": "<p>No measuring tape? A piece of string and a ruler works. Measure, then lay the string flat against the ruler. You'll land within half an inch.</p>" }
+  ],
+  "blocks": [
+    {
+      "type": "size_row",
+      "name": "Size row",
+      "limit": 12,
+      "settings": [
+        { "type": "text", "id": "size", "label": "Size", "default": "L" },
+        { "type": "text", "id": "range", "label": "Thigh circumference", "default": "17.5 – 19.5\"" },
+        { "type": "text", "id": "fits_note", "label": "Fits note (optional)", "default": "Most popular" },
+        { "type": "checkbox", "id": "highlight", "label": "Highlight this row", "default": false }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Size guide" }]
+}
+{% endschema %}

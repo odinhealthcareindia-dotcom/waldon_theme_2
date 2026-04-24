@@ -1,0 +1,157 @@
+{%- if section.settings.show_section -%}
+<section class="ct-section section--comparison-table" style="background: {{ section.settings.bg_color }};">
+  <div class="ct-inner">
+    <p class="ct-eyebrow">{{ section.settings.eyebrow }}</p>
+    <h2 class="ct-title">{{ section.settings.heading }}</h2>
+    {%- if section.settings.intro != blank -%}
+      <div class="ct-intro">{{ section.settings.intro }}</div>
+    {%- endif -%}
+
+    <div class="ct-table">
+      <div class="ct-head">
+        <div class="ct-head__feature">{{ section.settings.feature_col_label }}</div>
+        <div class="ct-head__col-a">{{ section.settings.col_a_label }}</div>
+        <div class="ct-head__col-b ct-head__col-b--us">{{ section.settings.col_b_label }}</div>
+      </div>
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'row' -%}
+          <div class="ct-row" {{ block.shopify_attributes }}>
+            <div class="ct-cell ct-cell--feature">{{ block.settings.feature_name }}</div>
+            <div class="ct-cell ct-cell--a">
+              {%- case block.settings.col_a_value -%}
+                {%- when 'yes' -%}
+                  <span class="ct-check" aria-label="Yes">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                {%- when 'partial' -%}
+                  <span class="ct-partial" aria-label="Partial">◐</span>
+                {%- else -%}
+                  <span class="ct-no" aria-label="No">—</span>
+              {%- endcase -%}
+            </div>
+            <div class="ct-cell ct-cell--b">
+              <span class="ct-check" aria-label="Yes">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.section--comparison-table { border-bottom: 1px solid var(--stone-01); }
+.ct-inner {
+  max-width: var(--content-max, 1120px); margin: 0 auto;
+  padding: 48px 18px;
+}
+@media (min-width: 768px) { .ct-inner { padding: 72px 48px; } }
+
+.ct-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-muted); margin: 0 0 12px; font-weight: 500;
+}
+.ct-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(24px,5vw,34px); line-height: 1.08; letter-spacing: -0.022em;
+  color: var(--ink-00); margin: 0 0 14px;
+}
+.ct-title em { font-style: italic; font-weight: 300; color: var(--clay-500); }
+.ct-title p { 
+  font-family: var(--font-display) !important;
+  font-weight: 500;
+  font-size: 30px; 
+  line-height: 1.08; letter-spacing: -0.022em;
+  color: var(--ink-00); 
+  margin: 0;
+}
+.ct-intro { font-size: 15px; line-height: 1.55; color: var(--fg-body); max-width: 560px; margin: 0 0 24px; }
+.ct-intro p { margin: 0; font-size: 15px; }
+
+.ct-table {
+  background: var(--paper-00); border: 1px solid var(--stone-01);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+
+/* Header */
+.ct-head {
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr;
+  background: var(--paper-01);
+}
+.ct-head > div {
+  padding: 14px 12px; text-align: center;
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-muted); font-weight: 500;
+  border-right: 1px solid var(--stone-01);
+}
+.ct-head > div:last-child { border-right: 0; color: #fbf9f4; font-family: var(--font-display); font-size: 16px; }
+.ct-head__feature { text-align: left; }
+.ct-head__col-b--us {
+  background: var(--ink-00); color: var(--paper-00);
+  font-family: var(--font-display); font-size: 16px;
+  letter-spacing: -0.01em; text-transform: none;
+  
+}
+
+/* Rows */
+.ct-row {
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr;
+  border-top: 1px solid var(--stone-01);
+}
+.ct-cell {
+  padding: 12px; border-right: 1px solid var(--stone-01);
+  display: flex; align-items: center; justify-content: center;
+}
+.ct-cell:last-child { border-right: 0; background: rgba(168,94,58,.04); }
+.ct-cell--feature { justify-content: flex-start; font-size: 12.5px; color: var(--fg-body); }
+
+.ct-check { color: var(--sage-700); display: flex; align-items: center; }
+.ct-partial { color: var(--stone-03); font-size: 16px; }
+.ct-no { color: var(--stone-03); font-family: var(--font-mono); font-size: 16px; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Comparison table",
+  "tag": "section",
+  "class": "section section--comparison-table",
+  "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show section", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#F5F1E8" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Why Waldon" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Not another <em>pharmacy sleeve.</em></p>" },
+    { "type": "richtext", "id": "intro", "label": "Intro paragraph", "default": "<p>What the cheap ones at the drugstore can't do, and what makes ours worth it.</p>" },
+    { "type": "text", "id": "feature_col_label", "label": "Feature column header", "default": "Feature" },
+    { "type": "text", "id": "col_a_label", "label": "Column A header (competitor)", "default": "Drugstore" },
+    { "type": "text", "id": "col_b_label", "label": "Column B header (us)", "default": "Waldon" }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Comparison row",
+      "limit": 12,
+      "settings": [
+        { "type": "text", "id": "feature_name", "label": "Feature", "default": "Graduated compression zones" },
+        { "type": "select", "id": "col_a_value", "label": "Competitor value",
+          "options": [
+            { "value": "yes", "label": "Yes ✓" },
+            { "value": "partial", "label": "Partial ◐" },
+            { "value": "no", "label": "No —" }
+          ],
+          "default": "no" },
+        { "type": "select", "id": "col_b_value", "label": "Our value",
+          "options": [
+            { "value": "yes", "label": "Yes ✓" },
+            { "value": "partial", "label": "Partial ◐" },
+            { "value": "no", "label": "No —" }
+          ],
+          "default": "yes" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Comparison table" }]
+}
+{% endschema %}

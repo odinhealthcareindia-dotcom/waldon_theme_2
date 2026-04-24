@@ -1,0 +1,141 @@
+{%- if section.settings.show_section -%}
+<section class="sg-section section--stats-grid sg-bg--{{ section.settings.background_style }}">
+  <div class="sg-inner">
+    <p class="sg-eyebrow">{{ section.settings.eyebrow }}</p>
+    {% comment %} <h2 class="sg-title">{{ section.settings.heading }}</h2> {% endcomment %}
+    <h2 class="sg-title"><p>Relief that's <em>measured,</em> not promised.</p></h2>
+    <div class="sg-grid" style="--sg-cols: {{ section.settings.columns }};">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'stat' -%}
+          <div class="sg-stat sg-stat--{{ block.settings.value_color }}" {{ block.shopify_attributes }}>
+            <b class="sg-stat-value">{{ block.settings.value }}</b>
+            <span class="sg-stat-caption">{{ block.settings.caption }}</span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.section--stats-grid { border-bottom: 1px solid transparent; }
+.sg-bg--dark { background: var(--ink-00); }
+.sg-bg--cream { background: var(--paper-01); }
+.sg-bg--accent { background: var(--clay-500); }
+
+.sg-inner {
+  max-width: var(--content-max, 1120px); margin: 0 auto;
+  padding: 48px 18px;
+  text-align: center;
+}
+@media (min-width: 768px) { .sg-inner { padding: 72px 48px; } }
+
+.sg-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; margin: 0 0 12px; font-weight: 500;
+}
+.sg-bg--dark .sg-eyebrow { color: var(--ink-03); }
+.sg-bg--cream .sg-eyebrow { color: var(--fg-muted); }
+.sg-bg--accent .sg-eyebrow { color: rgba(251,249,244,.7); }
+
+.sg-title {
+  font-family: var(--font-display) !important; 
+  font-weight: 400;
+  line-height: 1.1; 
+  letter-spacing: -0.02em;
+  margin: 0 0 32px;
+}
+
+.sg-title p{
+  font-family: var(--font-display) !important; 
+  color: #fbf9f4;
+  font-size: 30px !important; 
+  margin: 0 !important;
+  font-weight: 500;
+}
+
+@media(max-width:768px){
+  .sg-title, .sg-eyebrow {
+  text-align: left;
+}
+}
+
+.sg-bg--dark .sg-title { color: var(--paper-00); }
+.sg-bg--cream .sg-title { color: var(--ink-00); }
+.sg-bg--accent .sg-title { color: var(--paper-00); }
+.sg-title em { font-style: italic; font-weight: 300; color: var(--clay-300); }
+.sg-bg--cream .sg-title em { color: var(--clay-500); }  
+
+.sg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px 20px;
+  justify-items: center;
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .sg-grid { grid-template-columns: repeat(var(--sg-cols, 2), 1fr); gap: 32px; }
+}
+
+.sg-stat-value {
+  font-family: var(--font-display); font-size: clamp(36px,8vw,52px);
+  font-weight: 400; letter-spacing: -0.02em; line-height: 1; display: block; margin-bottom: 6px;
+}
+.sg-stat-caption { font-size: 12.5px; line-height: 1.4; display: block; }
+
+/* Color variants */
+.sg-bg--dark .sg-stat-value { color: var(--paper-00); }
+/* .sg-bg--dark .sg-stat--accent .sg-stat-value { color: var(--clay-300); } */
+.sg-bg--dark .sg-stat--accent .sg-stat-value { color: #d4fbc5; }
+.sg-bg--dark .sg-stat-caption { color: var(--stone-02); }
+
+.sg-bg--cream .sg-stat-value { color: var(--ink-00); }
+.sg-bg--cream .sg-stat--accent .sg-stat-value { color: var(--clay-500); }
+.sg-bg--cream .sg-stat-caption { color: var(--fg-body); }
+
+.sg-stat--sage .sg-stat-value { color: #dde8d9; }
+.sg-bg--dark .sg-stat--sage .sg-stat-value { color: #dde8d9; }
+
+.sg-bg--accent .sg-stat-value, .sg-bg--accent .sg-stat-caption { color: var(--paper-00); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Stats grid",
+  "tag": "section",
+  "class": "section section--stats-grid",
+  "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show section", "default": true },
+    { "type": "select", "id": "background_style", "label": "Background",
+      "options": [
+        { "value": "dark", "label": "Dark" },
+        { "value": "cream", "label": "Cream" },
+        { "value": "accent", "label": "Accent (rust)" }
+      ],
+      "default": "dark" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The numbers" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Relief that's <em>measured,</em> not promised.</p>" },
+    { "type": "range", "id": "columns", "min": 2, "max": 4, "step": 1, "label": "Columns (desktop)", "default": 2 }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "limit": 4,
+      "settings": [
+        { "type": "text", "id": "value", "label": "Value", "default": "87%" },
+        { "type": "text", "id": "caption", "label": "Caption", "default": "felt meaningful pain relief within 7 days" },
+        { "type": "select", "id": "value_color", "label": "Value color",
+          "options": [
+            { "value": "cream", "label": "Cream / default" },
+            { "value": "accent", "label": "Accent (rust)" },
+            { "value": "sage", "label": "Sage green (#dde8d9)" }
+          ],
+          "default": "cream" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Stats grid" }]
+}
+{% endschema %}

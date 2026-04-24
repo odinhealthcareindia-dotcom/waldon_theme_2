@@ -1,0 +1,68 @@
+<div class="wd-topbar">
+  <span class="wd-topbar-rail">{{ section.settings.announcement }}</span>
+  <div class="wd-topbar-right">
+    {% if section.settings.link_1_label != blank %}
+      <a href="{{ section.settings.link_1_url }}">{{ section.settings.link_1_label }}</a>
+    {% endif %}
+    {% if section.settings.link_2_label != blank %}
+      <span class="wd-topbar-sep">·</span>
+      <a href="{{ section.settings.link_2_url }}">{{ section.settings.link_2_label }}</a>
+    {% endif %}
+    {% if section.settings.link_3_label != blank %}
+      <span class="wd-topbar-sep">·</span>
+      <a href="{{ section.settings.link_3_url }}">{{ section.settings.link_3_label }}</a>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "announcement",
+      "label": "Announcement text",
+      "default": "Free shipping over $60 · 60-night trial · FSA/HSA eligible"
+    },
+    {
+      "type": "text",
+      "id": "link_1_label",
+      "label": "Link 1 label",
+      "default": "Find your size"
+    },
+    {
+      "type": "url",
+      "id": "link_1_url",
+      "label": "Link 1 URL"
+    },
+    {
+      "type": "text",
+      "id": "link_2_label",
+      "label": "Link 2 label",
+      "default": "Help"
+    },
+    {
+      "type": "url",
+      "id": "link_2_url",
+      "label": "Link 2 URL"
+    },
+    {
+      "type": "text",
+      "id": "link_3_label",
+      "label": "Link 3 label",
+      "default": "Sign in"
+    },
+    {
+      "type": "url",
+      "id": "link_3_url",
+      "label": "Link 3 URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,147 @@
+{% comment %}
+  This section is used in the collection template to render collection page
+  listing all products within a collection.
+
+  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+{% endcomment %}
+
+<div class="cd-container">
+  <h1 class="cd-title">{{ collection.title }}</h1>
+
+  <div class="cd-search-wrap">
+    <input
+      type="search"
+      class="cd-search"
+      placeholder="Search products…"
+      aria-label="Search products"
+      id="cd-search-input"
+    >
+  </div>
+
+  <div class="cd-grid" id="cd-grid">
+    {% paginate collection.products by 20 %}
+      {% for product in collection.products %}
+        <div class="cd-card" data-title="{{ product.title | downcase | escape }}">
+          {% if product.featured_image %}
+            {% render 'image-drive',
+              class: 'cd-card__image',
+              image: product.featured_image,
+              url: product.url,
+              width: 400,
+              height: 400,
+              crop: 'center'
+            %}
+          {% endif %}
+          <div class="cd-card__content">
+            <p>{{ product.title | escape | link_to: product.url }}</p>
+            <p>{{ product.price | money }}</p>
+          </div>
+        </div>
+      {% endfor %}
+
+      {{ paginate | default_pagination }}
+    {% endpaginate %}
+  </div>
+
+  <p class="cd-no-results" id="cd-no-results" style="display:none;">No products match your search.</p>
+</div>
+
+{% stylesheet %}
+  .cd-container {
+    padding: 32px 48px 64px;
+    max-width: 1296px;
+    margin: 0 auto;
+  }
+
+  .cd-title {
+    margin-bottom: 24px;
+  }
+
+  .cd-search-wrap {
+    margin-bottom: 24px;
+  }
+
+  .cd-search {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--ink-00);
+    background: var(--paper-01);
+    outline: none;
+    transition: border-color 180ms ease;
+  }
+
+  .cd-search:focus {
+    border-color: var(--clay-500);
+  }
+
+  .cd-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .cd-no-results {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--fg-muted);
+    margin-top: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    .cd-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .cd-container {
+      padding: 24px 24px 48px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cd-container {
+      padding: 20px 16px 40px;
+    }
+    .cd-search {
+      max-width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function() {
+    var input = document.getElementById('cd-search-input');
+    var grid = document.getElementById('cd-grid');
+    var noResults = document.getElementById('cd-no-results');
+
+    if (!input || !grid) return;
+
+    input.addEventListener('input', function() {
+      var query = input.value.toLowerCase().trim();
+      var cards = grid.querySelectorAll('.cd-card');
+      var visible = 0;
+
+      cards.forEach(function(card) {
+        var title = card.getAttribute('data-title') || '';
+        var match = query === '' || title.indexOf(query) !== -1;
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+
+      noResults.style.display = visible === 0 ? '' : 'none';
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:general.collection",
+  "settings": []
+}
+{% endschema %}

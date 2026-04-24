@@ -1,0 +1,252 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "blocks": {
+        "stat-1": {
+          "type": "stat",
+          "settings": {
+            "value": "94%",
+            "label": "report less pain"
+          }
+        },
+        "stat-2": {
+          "type": "stat",
+          "settings": {
+            "value": "12wk",
+            "label": "clinical study"
+          }
+        },
+        "stat-3": {
+          "type": "stat",
+          "settings": {
+            "value": "4.8★",
+            "label": "5,800+ reviews"
+          }
+        }
+      },
+      "block_order": [
+        "stat-1",
+        "stat-2",
+        "stat-3"
+      ],
+      "settings": {
+        "eyebrow": "Orthopedic support · designed with PTs",
+        "heading_pre": "Move",
+        "heading_em": "better",
+        "heading_line2": "Every day.",
+        "body_text": "Compression, bracing, and recovery for knees, backs, wrists, and feet. Clinically considered, comfortably worn.",
+        "cta_label": "Shop by concern",
+        "cta_url": "/collections/all",
+        "trial_label": "60-night trial",
+        "card_badge": "Bestseller",
+        "card_image": "shopify://shop_images/Artboard_5_b66b1d03-1426-4221-9fab-12dc2ac3b6aa.jpg",
+        "card_tone": "sage",
+        "card_ref": "WO-01",
+        "card_category": "Knee",
+        "card_name": "Knee compression sleeve",
+        "card_tagline": "Daily support for runners, walkers, desk-bound knees.",
+        "card_price": "48",
+        "card_url": "shopify://products/premium-bamboo-knee-sleeve"
+      }
+    },
+    "concern-strip": {
+      "type": "concern-strip",
+      "blocks": {
+        "concern-1": {
+          "type": "concern",
+          "settings": {
+            "label": "Knee",
+            "sub": "Sleeves, braces",
+            "icon": "activity",
+            "tone": "sage",
+            "url": ""
+          }
+        },
+        "concern-2": {
+          "type": "concern",
+          "settings": {
+            "label": "Back",
+            "sub": "Lumbar, posture",
+            "icon": "move-vertical",
+            "tone": "clay",
+            "url": ""
+          }
+        },
+        "concern-3": {
+          "type": "concern",
+          "settings": {
+            "label": "Foot & ankle",
+            "sub": "Insoles, wraps",
+            "icon": "footprints",
+            "tone": "stone",
+            "url": ""
+          }
+        },
+        "concern-4": {
+          "type": "concern",
+          "settings": {
+            "label": "Wrist & hand",
+            "sub": "Braces, gloves",
+            "icon": "hand",
+            "tone": "sage",
+            "url": ""
+          }
+        },
+        "concern-5": {
+          "type": "concern",
+          "settings": {
+            "label": "Recovery",
+            "sub": "Cold, heat, massage",
+            "icon": "snowflake",
+            "tone": "clay",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "concern-1",
+        "concern-2",
+        "concern-3",
+        "concern-4",
+        "concern-5"
+      ],
+      "settings": {
+        "eyebrow": "Shop by concern",
+        "title": "Where does it hurt?"
+      }
+    },
+    "bestsellers": {
+      "type": "bestsellers",
+      "settings": {
+        "eyebrow": "Most recommended",
+        "title": "What people reach for.",
+        "collection": "lifestyle-improvement",
+        "max_products": 4,
+        "all_label": "All products",
+        "all_url": "/collections/all"
+      }
+    },
+    "proof-band": {
+      "type": "proof-band",
+      "blocks": {
+        "proof-1": {
+          "type": "stat",
+          "settings": {
+            "value": "94%",
+            "description": "report less pain after 4 weeks"
+          }
+        },
+        "proof-2": {
+          "type": "stat",
+          "settings": {
+            "value": "4.8 / 5",
+            "description": "across 5,800+ verified reviews"
+          }
+        },
+        "proof-3": {
+          "type": "stat",
+          "settings": {
+            "value": "60 nights",
+            "description": "risk-free trial on every order"
+          }
+        },
+        "proof-4": {
+          "type": "stat",
+          "settings": {
+            "value": "FSA / HSA",
+            "description": "eligible at checkout"
+          }
+        }
+      },
+      "block_order": [
+        "proof-1",
+        "proof-2",
+        "proof-3",
+        "proof-4"
+      ],
+      "settings": {}
+    },
+    "new-arrivals": {
+      "type": "new-arrivals",
+      "settings": {
+        "eyebrow": "New in",
+        "title": "Recently added.",
+        "collection": "frontpage",
+        "max_products": 4
+      }
+    },
+    "expert-callout": {
+      "type": "expert-callout",
+      "settings": {
+        "expert_name": "Dr. Nia Rao, DPT",
+        "expert_role": "Physical therapist · Clinical advisor",
+        "quote": "Compression isn't a cure — it's a cue. The right sleeve reminds the joint how to move, and pain often quiets on its own.",
+        "link_label": "Read our clinical approach",
+        "link_url": ""
+      }
+    },
+    "trust-bar": {
+      "type": "trust-bar",
+      "blocks": {
+        "trust-1": {
+          "type": "item",
+          "settings": {
+            "icon": "shield-check",
+            "title": "60-night trial",
+            "sub": "Return worn or unworn"
+          }
+        },
+        "trust-2": {
+          "type": "item",
+          "settings": {
+            "icon": "stethoscope",
+            "title": "PT-reviewed",
+            "sub": "Every product"
+          }
+        },
+        "trust-3": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Free US shipping",
+            "sub": "Orders over $60"
+          }
+        },
+        "trust-4": {
+          "type": "item",
+          "settings": {
+            "icon": "wallet",
+            "title": "FSA / HSA eligible",
+            "sub": "At checkout"
+          }
+        }
+      },
+      "block_order": [
+        "trust-1",
+        "trust-2",
+        "trust-3",
+        "trust-4"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "concern-strip",
+    "bestsellers",
+    "proof-band",
+    "new-arrivals",
+    "expert-callout",
+    "trust-bar"
+  ]
+}

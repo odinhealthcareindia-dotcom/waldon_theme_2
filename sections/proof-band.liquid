@@ -1,0 +1,79 @@
+<section class="wd-proof-section">
+  <div class="wd-container">
+    <div class="wd-proof">
+      <div class="wd-proof-grid">
+        {% for block in section.blocks %}
+          {% if block.type == 'stat' %}
+            <div class="wd-proof-item" {{ block.shopify_attributes }}>
+              <b>{{ block.settings.value }}</b>
+              <span>{{ block.settings.description }}</span>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Proof band",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Stat value",
+          "default": "94%"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "report less pain after 4 weeks"
+        }
+      ]
+    }
+  ],
+  "settings": [],
+  "presets": [
+    {
+      "name": "Proof band",
+      "blocks": [
+        {
+          "type": "stat",
+          "settings": {
+            "value": "94%",
+            "description": "report less pain after 4 weeks"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "value": "4.8 / 5",
+            "description": "across 5,800+ verified reviews"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "value": "60 nights",
+            "description": "risk-free trial on every order"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "value": "FSA / HSA",
+            "description": "eligible at checkout"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

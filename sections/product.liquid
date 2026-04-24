@@ -1,0 +1,817 @@
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign concern_blocks = section.blocks | where: "type", "concern" -%}
+{%- assign feature_blocks = section.blocks | where: "type", "feature" -%}
+{%- assign usecase_blocks = section.blocks | where: "type", "use_case" -%}
+{%- assign faq_blocks     = section.blocks | where: "type", "faq" -%}
+{%- assign review_blocks  = section.blocks | where: "type", "review" -%}
+{%- assign compare_blocks = section.blocks | where: "type", "compare_row" -%}
+{%- assign proof_blocks   = section.blocks | where: "type", "proof_stat" -%}
+{%- assign bundle_blocks  = section.blocks | where: "type", "bundle" -%}
+
+{%- assign size_option  = nil -%}
+{%- assign color_option = nil -%}
+{%- for option in product.options_with_values -%}
+  {%- assign opt_lower = option.name | downcase -%}
+  {%- if opt_lower == 'size' -%}{%- assign size_option = option -%}
+  {%- elsif opt_lower == 'color' or opt_lower == 'colour' -%}{%- assign color_option = option -%}
+  {%- endif -%}
+{%- endfor -%}
+
+<div id="pdp">
+
+  {%- if section.settings.announcement != blank -%}
+  <div class="pdp-announcement">
+    <span><span class="pdp-ember-dot"></span>{{ section.settings.announcement }}</span>
+    <span>{{ section.settings.guarantee_days | default: 60 }}-day trial · Free returns</span>
+  </div>
+  {%- endif -%}
+
+  {{- 'pdp.css' | asset_url | stylesheet_tag -}}
+  <script src="{{ 'pdp.js' | asset_url }}" defer></script>
+
+  <!-- ░░ GALLERY ░░ -->
+  <section class="pdp-gallery">
+    <div class="pdp-flag-cluster">
+      <span class="pdp-flag pdp-flag--accent">{{ product.vendor | default: 'Waldon' }} № 01</span>
+      {%- if section.settings.show_low_stock -%}
+        <span class="pdp-flag pdp-flag--low"><span class="pdp-flag-dot"></span>{{ 'product.low_stock' | t }}</span>
+      {%- endif -%}
+    </div>
+
+    <div class="pdp-gallery-main" id="pdp-gallery-main">
+      {%- if product.media.size > 0 -%}
+        {%- for media in product.media -%}
+          <div class="pdp-gallery-slide{% if forloop.first %} active{% endif %}" data-index="{{ forloop.index0 }}">
+            {%- if media.media_type == 'image' -%}
+              {%- if forloop.first -%}
+                {{ media | image_url: width: 800 | image_tag: alt: media.alt, loading: 'eager', class: 'pdp-gallery-img' }}
+              {%- else -%}
+                {{ media | image_url: width: 800 | image_tag: alt: media.alt, loading: 'lazy', class: 'pdp-gallery-img' }}
+              {%- endif -%}
+            {%- elsif media.media_type == 'video' -%}
+              {{ media | video_tag: autoplay: false, loop: true, muted: true, controls: true, class: 'pdp-gallery-img' }}
+            {%- else -%}
+              {{ media | image_url: width: 800 | image_tag: alt: media.alt, class: 'pdp-gallery-img' }}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="pdp-gallery-slide active">
+          {{ 'product-1' | placeholder_svg_tag: 'pdp-gallery-img pdp-gallery-placeholder' }}
+        </div>
+      {%- endif -%}
+
+      <div class="pdp-gallery-dots" id="pdp-gallery-dots">
+        {%- for media in product.media -%}
+          <button class="pdp-gallery-dot{% if forloop.first %} active{% endif %}"
+            data-index="{{ forloop.index0 }}"
+            aria-label="{{ 'product.image_index' | t: index: forloop.index }}"></button>
+        {%- else -%}
+          <button class="pdp-gallery-dot active" data-index="0" aria-label="{{ 'product.image_index' | t: index: 1 }}"></button>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- if product.media.size > 1 -%}
+    <div class="pdp-gallery-thumbs" id="pdp-gallery-thumbs">
+      {%- for media in product.media limit: 5 -%}
+        <button class="pdp-gallery-thumb{% if forloop.first %} active{% endif %}"
+          data-index="{{ forloop.index0 }}"
+          aria-label="{{ 'product.image_index' | t: index: forloop.index }}">
+          {{ media | image_url: width: 120 | image_tag: alt: media.alt, loading: 'lazy' }}
+        </button>
+      {%- endfor -%}
+    </div>
+    {%- endif -%}
+  </section>
+
+  <!-- ░░ META ░░ -->
+  <div class="pdp-meta">
+    <div class="pdp-eyebrow-row">
+      <span class="pdp-eyebrow">{{ product.vendor }}</span>
+      <div class="pdp-press-mini">
+        <span>{{ 'product.as_seen_in' | t }}</span>
+        <span>·</span><span>Forbes</span>
+        <span>·</span><span>Healthline</span>
+      </div>
+    </div>
+    <h1 class="pdp-title">{{ product.title }}</h1>
+    {%- if section.settings.subtitle != blank -%}
+      <p class="pdp-sub">{{ section.settings.subtitle }}</p>
+    {%- endif -%}
+    <div class="pdp-rating-row">
+      {%- assign rating_val = section.settings.rating | default: 4.9 | times: 1 -%}
+      <span class="pdp-stars" aria-label="{{ rating_val }} {{ 'product.out_of_5' | t }}">
+        {%- for i in (1..5) -%}<span{% if i <= rating_val %} class="on"{% endif %}>★</span>{%- endfor -%}
+      </span>
+      <span class="pdp-rating-text"><b>{{ rating_val }}</b></span>
+      <span class="pdp-rating-sep">·</span>
+      <span class="pdp-rating-text"><b>{{ section.settings.review_count | default: 18472 }}</b> {{ 'product.reviews' | t }}</span>
+      <span class="pdp-rating-sep">·</span>
+      <span class="pdp-verified">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        {{ 'product.verified' | t }}
+      </span>
+    </div>
+  </div>
+
+  <!-- ░░ FORM — price / variants / bundles / add ░░ -->
+  {% form 'product', product, id: 'pdp-form', novalidate: 'novalidate' %}
+    <input type="hidden" name="id"       id="pdp-variant-id" value="{{ current_variant.id }}">
+    <input type="hidden" name="quantity" id="pdp-quantity"   value="1">
+
+    <!-- Price -->
+    <div class="pdp-offer">
+      <div class="pdp-price-row">
+        <span class="pdp-price" id="pdp-price"
+          data-base="{{ current_variant.price }}">{{ current_variant.price | money }}</span>
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          <span class="pdp-price-strike" id="pdp-strike">{{ current_variant.compare_at_price | money }}</span>
+          {%- assign save_pct = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price -%}
+          <span class="pdp-price-save" id="pdp-save">{{ 'product.save_pct' | t: pct: save_pct }}</span>
+        {%- endif -%}
+      </div>
+      {%- assign installment_price = current_variant.price | divided_by: 4 | money -%}
+      <p class="pdp-installments">{{ 'product.installments_html' | t: amount: installment_price }}</p>
+
+      {%- if section.settings.show_countdown -%}
+      <div class="pdp-countdown" id="pdp-countdown">
+        <div class="pdp-countdown-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="pdp-countdown-text">
+          <b>{{ 'product.sale_ends' | t }}</b>
+          {{ 'product.free_shipping_over' | t: amount: section.settings.free_shipping_threshold | default: 75 }}
+        </div>
+        <div class="pdp-countdown-clock">
+          <b id="pdp-cd-h">02</b><b id="pdp-cd-m">47</b><b id="pdp-cd-s">12</b>
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Concern checklist -->
+    {%- assign meta_concerns = product.metafields.custom.built_for.value -%}
+    {%- assign show_concerns = false -%}
+    {%- if concern_blocks.size > 0 or meta_concerns != blank or section.settings.show_built_for -%}
+      {%- assign show_concerns = true -%}
+    {%- endif -%}
+    {%- if show_concerns -%}
+    <section class="pdp-concerns">
+      <div class="pdp-concerns-title">{{ section.settings.built_for_heading | default: 'Built for' }}</div>
+      <div class="pdp-concerns-grid">
+        {%- if meta_concerns != blank and meta_concerns.size > 0 -%}
+          {%- for item in meta_concerns -%}
+            <div class="pdp-concern checked">
+              <span class="pdp-concern-check" aria-hidden="true">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              {{ item.label.value | default: item.label }}
+            </div>
+          {%- endfor -%}
+        {%- elsif concern_blocks.size > 0 -%}
+          {%- for block in concern_blocks -%}
+            <div class="pdp-concern checked" {{ block.shopify_attributes }}>
+              <span class="pdp-concern-check" aria-hidden="true">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              {{ block.settings.label }}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign default_concerns = 'Arthritis & joint pain,Swelling & fluid retention,Stiffness in the morning,Post-surgery recovery,Pain on the stairs,Standing all day,Aching while sleeping,Bone-on-bone grinding' | split: ',' -%}
+          {%- for label in default_concerns -%}
+            <div class="pdp-concern checked">
+              <span class="pdp-concern-check" aria-hidden="true">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              {{ label }}
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </section>
+    {%- endif -%}
+
+    <!-- Variants -->
+    <section class="pdp-variants">
+
+      {%- if size_option -%}
+      <div class="pdp-variant-block">
+        <div class="pdp-variant-head">
+          {%- assign size_opt_idx = size_option.position | minus: 1 -%}
+          <span class="pdp-variant-label">{{ size_option.name }}
+            <b id="pdp-size-label">— {{ current_variant.options[size_opt_idx] }}</b></span>
+          <button type="button" class="pdp-variant-help" id="pdp-size-guide-btn">{{ 'product.measure_thigh' | t }}</button>
+        </div>
+        <div class="pdp-sizes" role="group" aria-label="{{ 'product.select_size' | t }}">
+          {%- for value in size_option.values -%}
+            {%- assign sz_avail = false -%}
+            {%- for v in product.variants -%}
+              {%- if v.available and v.options contains value -%}{%- assign sz_avail = true -%}{%- endif -%}
+            {%- endfor -%}
+            <button type="button"
+              class="pdp-size{% if current_variant.options contains value %} active{% endif %}{% unless sz_avail %} oos{% endunless %}"
+              data-option-name="{{ size_option.name | escape }}"
+              data-option-value="{{ value | escape }}"
+              {% unless sz_avail %}aria-disabled="true"{% endunless %}
+              aria-label="{{ value }}">{{ value }}</button>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+
+      {%- if color_option -%}
+      <div class="pdp-variant-block">
+        <div class="pdp-variant-head">
+          {%- assign color_opt_idx = color_option.position | minus: 1 -%}
+          <span class="pdp-variant-label">{{ color_option.name }}
+            <b id="pdp-color-label">— {{ current_variant.options[color_opt_idx] }}</b></span>
+        </div>
+        <div class="pdp-colors" role="group" aria-label="{{ 'product.select_color' | t }}">
+          {%- for value in color_option.values -%}
+            {%- assign vl = value | downcase -%}
+            {%- if vl contains 'black' or vl contains 'ink' -%}{%- assign sw = '#1A1815' -%}
+            {%- elsif vl contains 'clay' or vl contains 'terra' -%}{%- assign sw = '#A85E3A' -%}
+            {%- elsif vl contains 'sage' or vl contains 'green' -%}{%- assign sw = '#6B7860' -%}
+            {%- else -%}{%- assign sw = '#A8A193' -%}
+            {%- endif -%}
+            <button type="button"
+              class="pdp-color{% if current_variant.options contains value %} active{% endif %}"
+              data-option-name="{{ color_option.name | escape }}"
+              data-option-value="{{ value | escape }}"
+              aria-label="{{ value }}">
+              <span class="pdp-color-swatch" style="background:{{ sw }};"></span>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+
+      {%- for option in product.options_with_values -%}
+        {%- assign ol = option.name | downcase -%}
+        {%- unless ol == 'size' or ol == 'color' or ol == 'colour' -%}
+        <div class="pdp-variant-block">
+          <div class="pdp-variant-head">
+            {%- assign other_opt_idx = option.position | minus: 1 -%}
+            <span class="pdp-variant-label">{{ option.name }}
+              <b>— {{ current_variant.options[other_opt_idx] }}</b></span>
+          </div>
+          <div class="pdp-sizes" role="group" aria-label="{{ option.name }}">
+            {%- for value in option.values -%}
+              <button type="button"
+                class="pdp-size{% if current_variant.options contains value %} active{% endif %}"
+                data-option-name="{{ option.name | escape }}"
+                data-option-value="{{ value | escape }}"
+                aria-label="{{ value }}">{{ value }}</button>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%- endunless -%}
+      {%- endfor -%}
+
+      {%- if bundle_blocks.size > 0 -%}
+      <div class="pdp-variant-block">
+        <div class="pdp-variant-head">
+          <span class="pdp-variant-label">{{ 'product.bundle_save' | t }}</span>
+        </div>
+        <div class="pdp-bundles" role="group" aria-label="{{ 'product.bundle_save' | t }}">
+          {%- for block in bundle_blocks -%}
+            <button type="button"
+              class="pdp-bundle{% if forloop.index == 2 %} active{% endif %}{% if block.settings.popular %} popular{% endif %}"
+              data-qty="{{ block.settings.qty }}"
+              data-price="{{ block.settings.price | times: 100 }}"
+              {{ block.shopify_attributes }}>
+              <span class="pdp-bundle-radio"></span>
+              <div class="pdp-bundle-top">
+                <span class="pdp-bundle-name">{{ block.settings.label }}</span>
+                {%- if block.settings.tag != blank -%}
+                  <span class="pdp-bundle-tag pdp-bundle-tag--{{ block.settings.tag_type }}">{{ block.settings.tag }}</span>
+                {%- endif -%}
+              </div>
+              <div class="pdp-bundle-sub">{{ block.settings.sub }}</div>
+              <div class="pdp-bundle-price-row">
+                <div>
+                  {%- if block.settings.strike > 0 -%}
+                    <span class="pdp-bundle-price-strike">${{ block.settings.strike }}</span>
+                  {%- endif -%}
+                  <span class="pdp-bundle-price">${{ block.settings.price }}</span>
+                </div>
+                <span class="pdp-bundle-unit">${{ block.settings.unit_price }} {{ 'product.each' | t }}</span>
+              </div>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+
+    </section>
+
+    <!-- Add to bag -->
+    <div class="pdp-add">
+      <button type="submit" name="add" id="pdp-add-btn"
+        class="pdp-add-btn{% unless current_variant.available %} pdp-add-btn--unavailable{% endunless %}"
+        {% unless current_variant.available %}disabled{% endunless %}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        {%- if current_variant.available -%}
+          {{ 'product.add_to_bag' | t }}
+        {%- else -%}
+          {{ 'product.sold_out' | t }}
+        {%- endif -%}
+        <span class="pdp-add-btn-price" id="pdp-add-price">{{ current_variant.price | money }}</span>
+      </button>
+      <div class="pdp-pays">
+        <b>{{ 'product.secure_checkout' | t }}</b>
+        <div class="pdp-pays-row">
+          <span>Visa</span><span>MC</span><span>Amex</span><span>PayPal</span><span>Shop Pay</span>
+        </div>
+      </div>
+    </div>
+  {% endform %}
+
+  <!-- ░░ ASSURANCE ░░ -->
+  <div class="pdp-assurance">
+    <div class="pdp-assurance-grid">
+      <div class="pdp-assurance-item">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        {%- assign fs_threshold = section.settings.free_shipping_threshold | default: 75 -%}
+        <b>{{ 'product.free_shipping' | t }}<br>{{ 'product.over_amount' | t: amount: fs_threshold }}</b>
+        <span>{{ 'product.us_orders' | t }}</span>
+      </div>
+      <div class="pdp-assurance-item">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <b>{{ section.settings.guarantee_days | default: 60 }}-{{ 'product.day_guarantee' | t }}<br></b>
+        <span>{{ 'product.full_refund' | t }}</span>
+      </div>
+      <div class="pdp-assurance-item">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <b>{{ 'product.doctor_recommended' | t }}<br></b>
+        <span>{{ 'product.ortho_approved' | t }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ PRESS BAR ░░ -->
+  <div class="pdp-press">
+    <p class="pdp-press-label">{{ 'product.as_seen_in' | t }}</p>
+    <div class="pdp-press-logos">
+      <div class="pdp-press-logo pdp-press-logo--serif-i">Forbes</div>
+      <div class="pdp-press-logo pdp-press-logo--sans">Healthline</div>
+      <div class="pdp-press-logo pdp-press-logo--serif-i">Prevention</div>
+      <div class="pdp-press-logo pdp-press-logo--mono">WebMD</div>
+    </div>
+  </div>
+
+  <!-- ░░ PROOF STATS ░░ -->
+  {%- if proof_blocks.size > 0 -%}
+  <section class="pdp-section pdp-section--ink">
+    <div class="pdp-section-eyebrow">{{ 'product.the_numbers' | t }}</div>
+    <h2 class="pdp-section-title">{{ 'product.proof_title_html' | t }}</h2>
+    <div class="pdp-proof-grid">
+      {%- for block in proof_blocks -%}
+        <div class="pdp-proof-item{% if block.settings.accent %} pdp-proof-item--accent{% endif %}" {{ block.shopify_attributes }}>
+          <b>{{ block.settings.value }}</b>
+          <span>{{ block.settings.label }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- ░░ PROBLEM / SOLUTION ░░ -->
+  {%- if section.settings.problem_title != blank -%}
+  <section class="pdp-section">
+    <div class="pdp-section-eyebrow">{{ section.settings.problem_eyebrow }}</div>
+    <h2 class="pdp-section-title">{{ section.settings.problem_title }}</h2>
+    <p class="pdp-section-lede">{{ section.settings.problem_lede }}</p>
+    <div class="pdp-problem-card">
+      <div class="pdp-cross pdp-cross--bad">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {{ 'product.the_problem' | t }}
+      </div>
+      <h3>{{ section.settings.problem_card_title }}</h3>
+      <p>{{ section.settings.problem_card_body }}</p>
+    </div>
+    <div class="pdp-problem-card pdp-problem-card--fix">
+      <div class="pdp-cross pdp-cross--good">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        {{ 'product.the_fix' | t }}
+      </div>
+      <h3>{{ section.settings.fix_card_title }}</h3>
+      <p>{{ section.settings.fix_card_body }}</p>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- ░░ USE CASES ░░ -->
+  {%- if usecase_blocks.size > 0 -%}
+  <section class="pdp-section pdp-section--tonal">
+    <div class="pdp-section-eyebrow">{{ 'product.who_its_for' | t }}</div>
+    <h2 class="pdp-section-title">{{ 'product.usecases_title_html' | t }}</h2>
+    <div class="pdp-usecases">
+      {%- for block in usecase_blocks -%}
+        {%- assign uc_bg = 'linear-gradient(155deg,#ECE6D6,#C98E6A 95%)' -%}
+        {%- if block.settings.bg == 'gray' -%}{%- assign uc_bg = 'linear-gradient(155deg,#D9D3C3,#8A8172 95%)' -%}
+        {%- elsif block.settings.bg == 'green' -%}{%- assign uc_bg = 'linear-gradient(155deg,#E9EEDF,#6B7860 95%)' -%}
+        {%- elsif block.settings.bg == 'night' -%}{%- assign uc_bg = 'linear-gradient(160deg,#3A3731,#1A1815 70%)' -%}
+        {%- endif -%}
+        <div class="pdp-usecase" {{ block.shopify_attributes }}>
+          <div class="pdp-usecase-img" style="background:{{ uc_bg }};"></div>
+          <div class="pdp-usecase-body">
+            <div class="pdp-usecase-eyebrow">{{ block.settings.eyebrow }}</div>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.body }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- ░░ FEATURES ░░ -->
+  {%- if feature_blocks.size > 0 -%}
+  <section class="pdp-section">
+    <div class="pdp-section-eyebrow">{{ 'product.whats_inside' | t }}</div>
+    <h2 class="pdp-section-title">{{ 'product.features_title_html' | t }}</h2>
+    <div class="pdp-features">
+      {%- for block in feature_blocks -%}
+        <div class="pdp-feature" {{ block.shopify_attributes }}>
+          <div class="pdp-feature-no">{{ block.settings.number }}</div>
+          <div>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.body }}</p>
+            {%- if block.settings.stat != blank -%}
+              <span class="pdp-feature-stat">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                {{ block.settings.stat }}
+              </span>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- ░░ COMPARE ░░ -->
+  {%- if compare_blocks.size > 0 -%}
+  <section class="pdp-section pdp-section--tonal">
+    <div class="pdp-section-eyebrow">{{ 'product.why_waldon' | t }}</div>
+    <h2 class="pdp-section-title">{{ 'product.compare_title_html' | t }}</h2>
+    <p class="pdp-section-lede">{{ 'product.compare_lede' | t }}</p>
+    <div class="pdp-compare">
+      <div class="pdp-compare-head">
+        <div>{{ 'product.feature' | t }}</div>
+        <div>{{ 'product.drugstore' | t }}</div>
+        <div class="pdp-compare-us">Waldon</div>
+      </div>
+      {%- for block in compare_blocks -%}
+        <div class="pdp-compare-row" {{ block.shopify_attributes }}>
+          <div>{{ block.settings.feature }}</div>
+          <div>
+            {%- if block.settings.them == 'yes' -%}
+              <span class="pdp-compare-check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+            {%- elsif block.settings.them == 'partial' -%}
+              <span class="pdp-compare-x" style="color:var(--stone-03)">◐</span>
+            {%- else -%}
+              <span class="pdp-compare-x">—</span>
+            {%- endif -%}
+          </div>
+          <div>
+            <span class="pdp-compare-check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- ░░ REVIEWS ░░ -->
+  {%- if review_blocks.size > 0 -%}
+  <section class="pdp-section">
+    <div class="pdp-section-eyebrow">{{ 'product.real_customers' | t }}</div>
+    <h2 class="pdp-section-title">{{ section.settings.review_count | default: 18472 }} {{ 'product.reviews_title_html' | t }}</h2>
+    <div class="pdp-reviews-summary">
+      <div class="pdp-reviews-score">
+        <b>{{ section.settings.rating | default: 4.9 }}</b>
+        <span class="pdp-stars">★★★★★</span>
+        <span>{{ 'product.verified_reviews' | t }}</span>
+      </div>
+      <div class="pdp-reviews-bars">
+        <div class="pdp-reviews-bar"><span>5★</span><div class="pdp-reviews-bar-track"><div class="pdp-reviews-bar-fill" style="width:86%"></div></div><span>86%</span></div>
+        <div class="pdp-reviews-bar"><span>4★</span><div class="pdp-reviews-bar-track"><div class="pdp-reviews-bar-fill" style="width:9%"></div></div><span>9%</span></div>
+        <div class="pdp-reviews-bar"><span>3★</span><div class="pdp-reviews-bar-track"><div class="pdp-reviews-bar-fill" style="width:3%"></div></div><span>3%</span></div>
+        <div class="pdp-reviews-bar"><span>2★</span><div class="pdp-reviews-bar-track"><div class="pdp-reviews-bar-fill" style="width:1%"></div></div><span>1%</span></div>
+        <div class="pdp-reviews-bar"><span>1★</span><div class="pdp-reviews-bar-track"><div class="pdp-reviews-bar-fill" style="width:1%"></div></div><span>1%</span></div>
+      </div>
+    </div>
+    {%- for block in review_blocks -%}
+      {%- assign stars = block.settings.stars | default: 5 -%}
+      <div class="pdp-review" {{ block.shopify_attributes }}>
+        <div class="pdp-review-head">
+          <span class="pdp-review-name">{{ block.settings.name }}{%- if block.settings.age != blank -%}, {{ block.settings.age }}{%- endif -%}
+            <span class="pdp-verified">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              {{ 'product.verified_buyer' | t }}
+            </span>
+          </span>
+          <span class="pdp-review-date">{{ block.settings.date }}</span>
+        </div>
+        <span class="pdp-stars" aria-label="{{ stars }} {{ 'product.out_of_5' | t }}">
+          {%- for i in (1..5) -%}<span{% if i <= stars %} class="on"{% endif %}>★</span>{%- endfor -%}
+        </span>
+        <h4>{{ block.settings.title }}</h4>
+        <p>{{ block.settings.body }}</p>
+        {%- if block.settings.tags != blank -%}
+          <div class="pdp-review-meta">
+            {%- assign tag_arr = block.settings.tags | split: ',' -%}
+            {%- for tag in tag_arr -%}<span><b>{{ tag | strip | upcase }}</b></span>{%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </section>
+  {%- endif -%}
+
+  <!-- ░░ DOCTOR ░░ -->
+  {%- if section.settings.doctor_quote != blank -%}
+  <section class="pdp-section pdp-section--tonal">
+    <div class="pdp-section-eyebrow">{{ 'product.expert_approved' | t }}</div>
+    <div class="pdp-doctor">
+      <div class="pdp-doctor-avatar" aria-hidden="true"></div>
+      <div class="pdp-doctor-body">
+        <p class="pdp-doctor-quote">"{{ section.settings.doctor_quote }}"</p>
+        <div class="pdp-doctor-name">{{ section.settings.doctor_name }}</div>
+        <div class="pdp-doctor-role">{{ section.settings.doctor_role }}</div>
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- ░░ FAQ ░░ -->
+  {%- if faq_blocks.size > 0 -%}
+  <section class="pdp-section">
+    <div class="pdp-section-eyebrow">{{ 'product.questions' | t }}</div>
+    <h2 class="pdp-section-title">{{ 'product.faq_title_html' | t }}</h2>
+    <div id="pdp-faq">
+      {%- for block in faq_blocks -%}
+        <div class="pdp-faq-item" {{ block.shopify_attributes }}>
+          <button class="pdp-faq-q" type="button"
+            aria-expanded="false"
+            aria-controls="pdp-faq-a-{{ block.id }}">
+            <span>{{ block.settings.question }}</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <div class="pdp-faq-a" id="pdp-faq-a-{{ block.id }}" role="region">
+            <div class="pdp-faq-a-inner">{{ block.settings.answer }}</div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+  {%- endif -%}
+
+  <!-- ░░ GUARANTEE ░░ -->
+  <section class="pdp-section pdp-section--ink">
+    <div class="pdp-guarantee">
+      <div class="pdp-guarantee-seal" aria-hidden="true">
+        <b>{{ section.settings.guarantee_days | default: 60 }}<small>{{ 'product.day_trial' | t }}</small></b>
+      </div>
+      {%- assign g_days = section.settings.guarantee_days | default: 60 -%}
+      {%- assign g_months = g_days | divided_by: 30 -%}
+      <h3>{{ 'product.guarantee_title_html' | t: days: g_days, months: g_months }}</h3>
+      <p>{{ 'product.guarantee_body' | t: days: g_days }}</p>
+    </div>
+  </section>
+
+  <!-- ░░ SIZE GUIDE ░░ -->
+  {%- if size_option -%}
+  <section class="pdp-section" id="pdp-size-guide">
+    <div class="pdp-section-eyebrow">{{ 'product.sizing' | t }}</div>
+    <h2 class="pdp-section-title">{{ 'product.size_guide_title_html' | t }}</h2>
+    <p class="pdp-section-lede">{{ 'product.size_guide_lede' | t }}</p>
+    <div class="pdp-sizeguide-table">
+      <div class="pdp-sizeguide-row pdp-sizeguide-row--head">
+        <span>{{ 'product.size' | t }}</span>
+        <span>{{ 'product.thigh_circumference' | t }}</span>
+        <span>{{ 'product.fits' | t }}</span>
+      </div>
+      <div class="pdp-sizeguide-row"><b>S</b><span>13.5 – 15.5"</span><span>—</span></div>
+      <div class="pdp-sizeguide-row"><b>M</b><span>15.5 – 17.5"</span><span>—</span></div>
+      <div class="pdp-sizeguide-row"><b>L</b><span>17.5 – 19.5"</span><span>{{ 'product.most_popular' | t }}</span></div>
+      <div class="pdp-sizeguide-row"><b>XL</b><span>19.5 – 21.5"</span><span>—</span></div>
+      <div class="pdp-sizeguide-row"><b>2XL</b><span>21.5 – 23.5"</span><span>—</span></div>
+      <div class="pdp-sizeguide-row"><b>3XL</b><span>23.5 – 25.5"</span><span>—</span></div>
+    </div>
+    <div class="pdp-sizeguide-how">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12h20M2 12l4-4M2 12l4 4M22 12l-4-4M22 12l-4 4"/></svg>
+      <p>{{ 'product.size_guide_tip' | t }}</p>
+    </div>
+  </section>
+  {%- endif -%}
+
+</div>
+
+<!-- ░░ STICKY BAR ░░ -->
+<div class="pdp-sticky" id="pdp-sticky" aria-hidden="true">
+  <div class="pdp-sticky-info">
+    <div class="pdp-sticky-price" id="pdp-sticky-price">
+      {{ current_variant.price | money }}
+      {%- if current_variant.compare_at_price > current_variant.price -%}
+        <span class="pdp-sticky-strike">{{ current_variant.compare_at_price | money }}</span>
+      {%- endif -%}
+    </div>
+    <div class="pdp-sticky-meta">{{ product.title }}</div>
+  </div>
+  <button type="button" class="pdp-sticky-btn" id="pdp-sticky-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    {{ 'product.add_to_bag' | t }}
+  </button>
+</div>
+
+<!-- ░░ TOAST ░░ -->
+<div class="pdp-toast" id="pdp-toast" role="status" aria-live="polite">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="pdp-toast-text">{{ 'product.added_to_bag' | t }}</span>
+</div>
+
+<!-- ░░ LIVE SOCIAL PROOF ░░ -->
+<div class="pdp-live" id="pdp-live" aria-live="polite">
+  <div class="pdp-live-dot" aria-hidden="true">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  </div>
+  <div class="pdp-live-text">
+    <b id="pdp-live-name">Margaret from TX</b> just ordered
+    <span id="pdp-live-time">2 min ago</span>
+  </div>
+</div>
+
+<!-- Product JSON for JS -->
+<script type="application/json" id="pdp-product-json">{{ product | json }}</script>
+
+{% schema %}
+{
+  "name": "t:general.product",
+  "settings": [
+    { "type": "header", "content": "Announcement" },
+    { "type": "text", "id": "announcement", "label": "Announcement text", "default": "Free shipping on orders over $75 · Sale ends tonight" },
+    { "type": "checkbox", "id": "show_countdown", "label": "Show countdown timer", "default": true },
+    { "type": "checkbox", "id": "show_low_stock", "label": "Show low-stock badge", "default": true },
+    { "type": "header", "content": "Product" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle / tagline", "default": "Graduated compression for daily knee pain." },
+    { "type": "number", "id": "rating", "label": "Rating (e.g. 4.9)", "default": 49 },
+    { "type": "number", "id": "review_count", "label": "Review count", "default": 18472 },
+    { "type": "header", "content": "Offer" },
+    { "type": "number", "id": "free_shipping_threshold", "label": "Free shipping threshold ($)", "default": 75 },
+    { "type": "number", "id": "guarantee_days", "label": "Guarantee days", "default": 60 },
+    { "type": "header", "content": "Built for" },
+    { "type": "checkbox", "id": "show_built_for", "label": "Show Built-for section", "default": true },
+    { "type": "text", "id": "built_for_heading", "label": "Section heading", "default": "Built for" },
+    { "type": "paragraph", "content": "Items are driven by the product metafield 'custom.built_for' (metaobject list). Falls back to blocks, then hardcoded defaults." },
+    { "type": "header", "content": "Problem / Solution" },
+    { "type": "text", "id": "problem_eyebrow", "label": "Eyebrow", "default": "The thing nobody tells you" },
+    { "type": "text", "id": "problem_title", "label": "Section title", "default": "You shouldn't have to plan your day around your knees." },
+    { "type": "textarea", "id": "problem_lede", "label": "Lede paragraph", "default": "The stairs. The grocery aisle. Standing up from the couch. If pain has started picking your routine, your joint needs support — not another pill." },
+    { "type": "text", "id": "problem_card_title", "label": "Problem card title", "default": "Cartilage is thinning. Inflammation is building." },
+    { "type": "textarea", "id": "problem_card_body", "label": "Problem card body", "default": "Over time, the cushioning that used to absorb shock wears down. Fluid builds up. The joint stiffens. Every step sends a jolt you used to not feel." },
+    { "type": "text", "id": "fix_card_title", "label": "Fix card title", "default": "Compression + warmth + proprioception." },
+    { "type": "textarea", "id": "fix_card_body", "label": "Fix card body", "default": "Waldon wraps the joint in three things at once: steady pressure to push out swelling, body heat to loosen stiffness, and gentle support so your knee remembers how to move." },
+    { "type": "header", "content": "Doctor endorsement" },
+    { "type": "textarea", "id": "doctor_quote", "label": "Quote", "default": "For the osteoarthritis and post-surgical patients I see, graduated compression is step one. Waldon is the sleeve I actually recommend." },
+    { "type": "text", "id": "doctor_name", "label": "Name", "default": "Dr. Evelyn Marsh, DPT, OCS" },
+    { "type": "text", "id": "doctor_role", "label": "Role", "default": "Orthopedic Physical Therapy · 22 years" }
+  ],
+  "blocks": [
+    {
+      "type": "concern",
+      "name": "Concern",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Arthritis & joint pain" }
+      ]
+    },
+    {
+      "type": "bundle",
+      "name": "Bundle option",
+      "settings": [
+        { "type": "number", "id": "qty", "label": "Quantity", "default": 1 },
+        { "type": "text", "id": "label", "label": "Label", "default": "Single sleeve" },
+        { "type": "text", "id": "sub", "label": "Sub-label", "default": "Good to try it out" },
+        { "type": "number", "id": "price", "label": "Price", "default": 54 },
+        { "type": "number", "id": "strike", "label": "Original price", "default": 79 },
+        { "type": "text", "id": "unit_price", "label": "Unit price (text)", "default": "54.00" },
+        { "type": "text", "id": "tag", "label": "Tag label (optional)" },
+        { "type": "select", "id": "tag_type", "label": "Tag style", "options": [{ "value": "save", "label": "Save (green)" }, { "value": "best", "label": "Best value (clay)" }], "default": "save" },
+        { "type": "checkbox", "id": "popular", "label": "Mark as popular", "default": false }
+      ]
+    },
+    {
+      "type": "proof_stat",
+      "name": "Proof stat",
+      "settings": [
+        { "type": "text", "id": "value", "label": "Value", "default": "87%" },
+        { "type": "text", "id": "label", "label": "Label", "default": "felt meaningful pain relief within 7 days" },
+        { "type": "checkbox", "id": "accent", "label": "Accent color", "default": false }
+      ]
+    },
+    {
+      "type": "use_case",
+      "name": "Use case",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "For the stairs" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Up and down, without the bargain." },
+        { "type": "textarea", "id": "body", "label": "Body", "default": "The compression supports the patellar tendon on every step." },
+        { "type": "select", "id": "bg", "label": "Background", "options": [{ "value": "warm", "label": "Warm (clay)" }, { "value": "gray", "label": "Warm gray" }, { "value": "green", "label": "Sage green" }, { "value": "night", "label": "Night (dark)" }], "default": "warm" }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "01" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Three-zone graduated compression." },
+        { "type": "textarea", "id": "body", "label": "Body", "default": "Firmest at the calf, medium at the knee, gentle at the thigh." },
+        { "type": "text", "id": "stat", "label": "Stat callout", "default": "72% less swelling by week 4" }
+      ]
+    },
+    {
+      "type": "compare_row",
+      "name": "Comparison row",
+      "settings": [
+        { "type": "text", "id": "feature", "label": "Feature", "default": "Graduated compression zones" },
+        { "type": "select", "id": "them", "label": "Drugstore has it?", "options": [{ "value": "yes", "label": "Yes" }, { "value": "partial", "label": "Partial" }, { "value": "no", "label": "No" }], "default": "no" }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Reviewer name", "default": "Margaret T." },
+        { "type": "text", "id": "age", "label": "Age (optional)", "default": "68" },
+        { "type": "range", "id": "stars", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "text", "id": "title", "label": "Review title", "default": "Got my stairs back." },
+        { "type": "textarea", "id": "body", "label": "Review body", "default": "After months of dreading the stairs to my bedroom, I can honestly say this sleeve gave me my evenings back." },
+        { "type": "text", "id": "tags", "label": "Tags (comma-separated)", "default": "ARTHRITIS, STAIRS, SIZE L" },
+        { "type": "text", "id": "date", "label": "Date", "default": "Mar 12" }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Will it actually help my arthritis pain?" },
+        { "type": "textarea", "id": "answer", "label": "Answer", "default": "Most customers feel meaningful relief within the first week. If it's not working for you in 60 days, you send it back. No questions." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product — Knee Sleeve PDP",
+      "blocks": [
+        { "type": "concern", "settings": { "label": "Arthritis & joint pain" } },
+        { "type": "concern", "settings": { "label": "Swelling & fluid retention" } },
+        { "type": "concern", "settings": { "label": "Stiffness in the morning" } },
+        { "type": "concern", "settings": { "label": "Post-surgery recovery" } },
+        { "type": "concern", "settings": { "label": "Pain on the stairs" } },
+        { "type": "concern", "settings": { "label": "Standing all day" } },
+        { "type": "concern", "settings": { "label": "Aching while sleeping" } },
+        { "type": "concern", "settings": { "label": "Bone-on-bone grinding" } },
+        { "type": "bundle", "settings": { "qty": 1, "label": "Single sleeve", "sub": "Good to try it out", "price": 54, "strike": 79, "unit_price": "54.00" } },
+        { "type": "bundle", "settings": { "qty": 2, "label": "Pair — one for each knee", "sub": "Most balanced relief", "price": 89, "strike": 158, "unit_price": "44.50", "tag": "Save 44%", "tag_type": "save" } },
+        { "type": "bundle", "settings": { "qty": 4, "label": "Family 4-pack", "sub": "Share the relief", "price": 149, "strike": 316, "unit_price": "37.25", "tag": "Best value", "tag_type": "best", "popular": true } },
+        { "type": "proof_stat", "settings": { "value": "87%", "label": "felt meaningful pain relief within 7 days", "accent": true } },
+        { "type": "proof_stat", "settings": { "value": "18,472", "label": "verified customer reviews" } },
+        { "type": "proof_stat", "settings": { "value": "4.9★", "label": "average rating across all sizes" } },
+        { "type": "proof_stat", "settings": { "value": "60 days", "label": "risk-free money-back guarantee" } },
+        { "type": "use_case", "settings": { "eyebrow": "For the stairs", "title": "Up and down, without the bargain.", "body": "The compression supports the patellar tendon on every step, so you stop negotiating with your house.", "bg": "warm" } },
+        { "type": "use_case", "settings": { "eyebrow": "On the job", "title": "Eight hours on concrete.", "body": "Teachers, nurses, retail, trades. All-day compression that doesn't bunch, pinch, or slip.", "bg": "gray" } },
+        { "type": "use_case", "settings": { "eyebrow": "After surgery", "title": "Faster, kinder recovery.", "body": "Graduated compression reduces post-op swelling. Surgeons in our network recommend it as an early-stage companion to PT.", "bg": "green" } },
+        { "type": "use_case", "settings": { "eyebrow": "At night", "title": "A knee that stops shouting.", "body": "The gentle warmth and steady pressure quiet the ache that keeps you shifting all night.", "bg": "night" } },
+        { "type": "feature", "settings": { "number": "01", "title": "Three-zone graduated compression.", "body": "Firmest at the calf, medium at the knee, gentle at the thigh. It pushes fluid up and out — which is why swelling drops within hours, not weeks.", "stat": "72% less swelling by week 4" } },
+        { "type": "feature", "settings": { "number": "02", "title": "Medical-grade knit that breathes.", "body": "4-way stretch nylon with moisture-wicking elastane. Cool enough to wear in bed. Strong enough to hold through a full shift on your feet.", "stat": "12-hour comfort wear" } },
+        { "type": "feature", "settings": { "number": "03", "title": "Silicone grips that actually grip.", "body": "Two bands of medical silicone anchor the sleeve so it doesn't inch down when you climb stairs, garden, or get up from the couch.", "stat": "No-slip guarantee" } },
+        { "type": "feature", "settings": { "number": "04", "title": "Warm the joint, calm the ache.", "body": "The knit traps body heat and holds it against the kneecap. Warmth loosens the joint capsule, which is why mornings stop starting with a grimace.", "stat": "Feels like a warm hand on the knee" } },
+        { "type": "compare_row", "settings": { "feature": "Graduated compression zones", "them": "no" } },
+        { "type": "compare_row", "settings": { "feature": "Medical-grade elastane", "them": "no" } },
+        { "type": "compare_row", "settings": { "feature": "Stays put on stairs", "them": "partial" } },
+        { "type": "compare_row", "settings": { "feature": "Breathable for all-day wear", "them": "no" } },
+        { "type": "compare_row", "settings": { "feature": "Anti-slip silicone bands", "them": "partial" } },
+        { "type": "compare_row", "settings": { "feature": "60-day money-back", "them": "no" } },
+        { "type": "compare_row", "settings": { "feature": "Doctor-recommended", "them": "no" } },
+        { "type": "review", "settings": { "name": "Margaret T.", "age": "68", "stars": 5, "title": "Got my stairs back.", "body": "After months of dreading the stairs to my bedroom, I can honestly say this sleeve gave me my evenings back. I wear it all day around the house. The difference with my osteoarthritis is real.", "tags": "ARTHRITIS, STAIRS, SIZE L", "date": "Mar 12" } },
+        { "type": "review", "settings": { "name": "David W.", "age": "72", "stars": 5, "title": "Post-surgery must-have.", "body": "My surgeon actually suggested compression after my partial knee replacement. Tried two other brands first — both slipped. Waldon stays put and the swelling goes down noticeably by mid-morning.", "tags": "POST-SURGERY, SWELLING, SIZE XL", "date": "Feb 28" } },
+        { "type": "review", "settings": { "name": "Linda H.", "age": "61", "stars": 5, "title": "Sleep through the night again.", "body": "I work retail, 8+ hours on my feet. By evening my knees would throb so badly I couldn't sleep. Started wearing this at home in the evenings and now I sleep straight through.", "tags": "STANDING ALL DAY, SLEEP, SIZE M", "date": "Feb 19" } },
+        { "type": "faq", "settings": { "question": "Will it actually help my arthritis pain?", "answer": "Most customers feel meaningful relief within the first week. The graduated compression increases blood flow, reduces inflammation, and provides proprioceptive support. If it's not working for you in 60 days, you send it back. No questions." } },
+        { "type": "faq", "settings": { "question": "Is it for one knee or both?", "answer": "Each Waldon sleeve fits one knee. Most customers start with one, but our 2-pack is the most popular choice for people who need support on both sides." } },
+        { "type": "faq", "settings": { "question": "How do I find my size?", "answer": "Measure the circumference of your thigh 4 inches above the center of your kneecap. Use our size chart — if you're between sizes, size down for firmer compression." } },
+        { "type": "faq", "settings": { "question": "Can I wear it all day? In bed?", "answer": "Yes. The breathable medical knit is designed for 12+ hours of wear. Many customers wear them overnight for morning stiffness. Take them off for at least a few hours each day to let skin breathe." } },
+        { "type": "faq", "settings": { "question": "Will it slip down on stairs or while walking?", "answer": "No. The silicone grip bands at the top and bottom keep it exactly where you put it — that's what separates it from the $15 drugstore versions." } },
+        { "type": "faq", "settings": { "question": "What if it doesn't work for me?", "answer": "Send it back within 60 days of delivery for a full refund. Even if you've worn it. That's the point of the guarantee." } },
+        { "type": "faq", "settings": { "question": "How long does shipping take?", "answer": "Standard US shipping is 3–5 business days. Free on orders over $75. We ship Monday through Friday from our New Jersey warehouse." } }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

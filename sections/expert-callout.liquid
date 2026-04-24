@@ -1,0 +1,78 @@
+<section class="wd-expert-section">
+  <div class="wd-container">
+    <div class="wd-expert">
+      <div class="wd-expert-card">
+
+        <div class="wd-expert-left">
+          <div class="wd-expert-avatar">
+            {% if section.settings.avatar != blank %}
+              {{ section.settings.avatar | image_url: width: 112 | image_tag: loading: 'lazy', widths: '56, 112' }}
+            {% endif %}
+          </div>
+          <div>
+            <div class="wd-expert-name">{{ section.settings.expert_name }}</div>
+            <div class="wd-expert-role">{{ section.settings.expert_role }}</div>
+          </div>
+        </div>
+
+        <blockquote class="wd-expert-quote">
+          {{ section.settings.quote | escape }}
+        </blockquote>
+
+        {% if section.settings.link_label != blank %}
+          <a href="{{ section.settings.link_url }}" class="wd-link-arrow">
+            {{ section.settings.link_label }} <i data-lucide="arrow-right"></i>
+          </a>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Expert callout",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "avatar",
+      "label": "Expert photo"
+    },
+    {
+      "type": "text",
+      "id": "expert_name",
+      "label": "Expert name",
+      "default": "Dr. Nia Rao, DPT"
+    },
+    {
+      "type": "text",
+      "id": "expert_role",
+      "label": "Expert role",
+      "default": "Physical therapist · Clinical advisor"
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Quote",
+      "default": "Compression isn't a cure — it's a cue. The right sleeve reminds the joint how to move, and pain often quiets on its own."
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "Read our clinical approach"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Expert callout"
+    }
+  ]
+}
+{% endschema %}

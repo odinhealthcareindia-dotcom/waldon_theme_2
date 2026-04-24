@@ -1,0 +1,129 @@
+{%- assign tones = 'sage,clay,stone,brass,slate' | split: ',' -%}
+
+<section class="wd-bestsellers-section">
+  <div class="wd-container">
+    <div class="wd-bestsellers">
+      <div class="wd-section-header">
+        <div>
+          {% if section.settings.eyebrow != blank %}
+            <div class="wd-eyebrow">{{ section.settings.eyebrow }}</div>
+          {% endif %}
+          <h2 class="wd-section-title">{{ section.settings.title }}</h2>
+        </div>
+        <a href="{{ section.settings.all_url | default: '/collections/all' }}" class="wd-link-arrow">
+          {{ section.settings.all_label }} <i data-lucide="arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="wd-best-grid">
+        {%- if section.settings.collection != blank -%}
+          {%- for product in section.settings.collection.products limit: section.settings.max_products -%}
+            {%- assign tone_index = forloop.index0 | modulo: 5 -%}
+            {%- assign tone = tones[tone_index] -%}
+            <a href="{{ product.url }}" class="wd-best-card">
+              <div class="wd-best-img wd-img-{{ tone }}">
+                {% if product.featured_image %}
+                  {{ product.featured_image | image_url: width: 600 | image_tag:
+                    loading: 'lazy',
+                    widths: '300, 450, 600',
+                    sizes: '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 25vw'
+                  }}
+                {% endif %}
+                {% if forloop.first %}
+                  <span class="wd-rank">Bestseller</span>
+                {% endif %}
+              </div>
+              <div class="wd-best-body">
+                {% if product.type != blank %}
+                  <div class="wd-eyebrow">{{ product.type }}</div>
+                {% endif %}
+                <div class="wd-best-name">{{ product.title }}</div>
+                <div class="wd-best-foot">
+                  <span class="wd-price-sm">{{ product.price | money }}</span>
+                  {% if product.available %}
+                    <span class="wd-stock-pip in">In stock</span>
+                  {% else %}
+                    <span class="wd-stock-pip low">Out of stock</span>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%} Placeholder cards when no collection is set {%- endcomment -%}
+          {%- assign placeholder_items = '1,2,3,4' | split: ',' -%}
+          {%- for i in placeholder_items -%}
+            {%- assign tone_index = forloop.index0 | modulo: 5 -%}
+            {%- assign tone = tones[tone_index] -%}
+            <div class="wd-best-card">
+              <div class="wd-best-img wd-img-{{ tone }}">
+                {% if forloop.first %}
+                  <span class="wd-rank">Bestseller</span>
+                {% endif %}
+              </div>
+              <div class="wd-best-body">
+                <div class="wd-eyebrow">Category</div>
+                <div class="wd-best-name">Product name</div>
+                <div class="wd-best-foot">
+                  <span class="wd-price-sm">$00.00</span>
+                  <span class="wd-stock-pip in">In stock</span>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bestsellers",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Most recommended"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "What people reach for."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Number of products",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "All products link label",
+      "default": "All products"
+    },
+    {
+      "type": "url",
+      "id": "all_url",
+      "label": "All products link URL",
+      "default": "/collections/all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bestsellers"
+    }
+  ]
+}
+{% endschema %}

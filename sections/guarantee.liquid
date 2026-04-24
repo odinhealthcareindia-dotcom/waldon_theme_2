@@ -1,0 +1,84 @@
+{%- if section.settings.show_section -%}
+<section class="gu-section section--guarantee" style="background: {{ section.settings.bg_color }};">
+  <div class="gu-inner">
+    <div class="gu-seal" aria-hidden="true">
+      <b class="gu-seal__num">{{ section.settings.badge_number }}</b>
+      <small class="gu-seal__label">{{ section.settings.badge_label }}</small>
+    </div>
+    <h2 class="gu-title">{{ section.settings.heading }}</h2>
+    <div class="gu-body">{{ section.settings.body }}</div>
+    {%- if section.settings.cta_label != blank and section.settings.cta_url != blank -%}
+      <a href="{{ section.settings.cta_url }}" class="gu-cta">{{ section.settings.cta_label }}</a>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.section--guarantee { border-bottom: 1px solid rgba(255,255,255,.08); }
+.gu-section { color: var(--paper-00); }
+.gu-inner {
+  max-width: 640px; margin: 0 auto;
+  padding: 56px 24px; text-align: center;
+}
+@media (min-width: 768px) { .gu-inner { padding: 80px 48px; } }
+
+.gu-seal {
+  width: 84px; height: 84px; border-radius: 999px;
+  border: 2px solid var(--clay-500);
+  display: inline-flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  margin: 0 auto 28px;
+}
+.gu-seal__num {
+  font-family: var(--font-display); font-size: 28px; font-weight: 400;
+  color: var(--paper-00); letter-spacing: -0.02em; line-height: 1;
+}
+.gu-seal__label {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--stone-02); display: block; margin-top: 2px;
+}
+
+.gu-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(24px,5vw,34px); line-height: 1.1; letter-spacing: -0.022em;
+  color: var(--paper-00); margin: 0 0 16px;
+}
+.gu-title p{
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 30px; line-height: 1.1; letter-spacing: -0.022em;
+  color: var(--paper-00); margin: 0 0 16px;
+}
+.gu-title em { font-style: italic; font-weight: 300; color: var(--clay-300); }
+
+.gu-body { font-size: 15px; line-height: 1.6; margin: 0 0 24px; }
+.gu-body p { margin: 0; color: #b8af99}
+
+.gu-cta {
+  display: inline-block; padding: 13px 28px;
+  background: transparent; color: var(--paper-00);
+  border: 1px solid rgba(251,249,244,.35);
+  border-radius: 999px; font-family: var(--font-sans); font-size: 14px; font-weight: 500;
+  text-decoration: none; transition: all 180ms var(--ease-out);
+}
+.gu-cta:hover { background: rgba(251,249,244,.1); color: var(--paper-00); text-decoration: none; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Guarantee",
+  "tag": "section",
+  "class": "section section--guarantee",
+  "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show section", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#1A1815" },
+    { "type": "text", "id": "badge_number", "label": "Badge number", "default": "60" },
+    { "type": "text", "id": "badge_label", "label": "Badge label", "default": "Day trial" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Wear it for two months. <em>Or send it back.</em></p>" },
+    { "type": "richtext", "id": "body", "label": "Body text", "default": "<p>Give your knees 60 days with Waldon. If you don't feel less pain, less swelling, and more freedom — return it for a full refund. Even if you've worn it every day.</p>" },
+    { "type": "text", "id": "cta_label", "label": "CTA label (optional)" },
+    { "type": "url", "id": "cta_url", "label": "CTA URL" }
+  ],
+  "presets": [{ "name": "Guarantee" }]
+}
+{% endschema %}

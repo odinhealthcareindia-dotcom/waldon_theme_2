@@ -1,0 +1,1104 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main-product": {
+      "type": "main-product",
+      "blocks": {
+        "concern-1": {
+          "type": "concern",
+          "settings": {
+            "label": "Arthritis & joint pain"
+          }
+        },
+        "concern-2": {
+          "type": "concern",
+          "settings": {
+            "label": "Swelling & fluid retention"
+          }
+        },
+        "concern-3": {
+          "type": "concern",
+          "settings": {
+            "label": "Stiffness in the morning"
+          }
+        },
+        "concern-4": {
+          "type": "concern",
+          "settings": {
+            "label": "Post-surgery recovery"
+          }
+        },
+        "concern-5": {
+          "type": "concern",
+          "settings": {
+            "label": "Pain on the stairs"
+          }
+        },
+        "concern-6": {
+          "type": "concern",
+          "settings": {
+            "label": "Standing all day"
+          }
+        },
+        "concern-7": {
+          "type": "concern",
+          "settings": {
+            "label": "Aching while sleeping"
+          }
+        },
+        "concern-8": {
+          "type": "concern",
+          "settings": {
+            "label": "Bone-on-bone grinding"
+          }
+        },
+        "bundle-1": {
+          "type": "bundle",
+          "settings": {
+            "qty": 1,
+            "label": "Single sleeve",
+            "sub": "Good to try it out",
+            "price": 54,
+            "strike": 79,
+            "unit_price": "54.00",
+            "tag": "",
+            "tag_type": "save",
+            "popular": false
+          }
+        },
+        "bundle-2": {
+          "type": "bundle",
+          "settings": {
+            "qty": 2,
+            "label": "Pair – one for each knee",
+            "sub": "Most balanced relief",
+            "price": 89,
+            "strike": 158,
+            "unit_price": "44.50",
+            "tag": "Save 44%",
+            "tag_type": "save",
+            "popular": false
+          }
+        },
+        "bundle-3": {
+          "type": "bundle",
+          "settings": {
+            "qty": 4,
+            "label": "Family 4-pack",
+            "sub": "Share the relief",
+            "price": 149,
+            "strike": 316,
+            "unit_price": "37.25",
+            "tag": "Best value",
+            "tag_type": "best",
+            "popular": true
+          }
+        },
+        "trust-1": {
+          "type": "trust_badge",
+          "settings": {
+            "icon": "truck",
+            "title": "Free shipping",
+            "subtitle": "Over $75"
+          }
+        },
+        "trust-2": {
+          "type": "trust_badge",
+          "settings": {
+            "icon": "shield-check",
+            "title": "60-day trial",
+            "subtitle": "Full refund"
+          }
+        },
+        "trust-3": {
+          "type": "trust_badge",
+          "settings": {
+            "icon": "refresh-cw",
+            "title": "Easy returns",
+            "subtitle": "No questions"
+          }
+        }
+      },
+      "block_order": [
+        "concern-1",
+        "concern-2",
+        "concern-3",
+        "concern-4",
+        "concern-5",
+        "concern-6",
+        "concern-7",
+        "concern-8",
+        "bundle-1",
+        "bundle-2",
+        "bundle-3",
+        "trust-1",
+        "trust-2",
+        "trust-3"
+      ],
+      "settings": {
+        "show_announcement": false,
+        "announcement_text": "Free shipping on orders over $75 · 60-day money-back guarantee",
+        "badge_left_text": "Waldon № 01",
+        "show_low_stock_badge": true,
+        "badge_right_text": "Low stock",
+        "meta_left": "№ 01 · Mobility",
+        "meta_right_label": "AS SEEN IN",
+        "press_list": "NYT · Prevention · AARP",
+        "title_override": "",
+        "rating_value": "4.9",
+        "review_count": 18472,
+        "show_afterpay": true,
+        "show_countdown": true,
+        "countdown_label": "Sale ends tonight.",
+        "countdown_sublabel": "Free shipping on orders over $75.",
+        "size_label": "Size",
+        "size_guide_text": "Measure my thigh",
+        "color_label": "Color",
+        "bundle_heading": "Bundle & save",
+        "atc_text": "Add to bag",
+        "sold_out_text": "Sold out",
+        "show_payment_icons": true,
+        "show_built_for": true,
+        "built_for_heading": "Built for",
+        "show_live_proof": true
+      }
+    },
+    "trust-badges": {
+      "type": "trust-badges",
+      "blocks": {
+        "badge-1": {
+          "type": "badge",
+          "settings": {
+            "icon": "truck",
+            "title": "Free shipping",
+            "subtitle": "Over $75"
+          }
+        },
+        "badge-2": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield-check",
+            "title": "60-day trial",
+            "subtitle": "Full refund"
+          }
+        },
+        "badge-3": {
+          "type": "badge",
+          "settings": {
+            "icon": "refresh-cw",
+            "title": "Easy returns",
+            "subtitle": "No questions"
+          }
+        }
+      },
+      "block_order": [
+        "badge-1",
+        "badge-2",
+        "badge-3"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_section": true,
+        "show_dividers": true
+      }
+    },
+    "press-logos": {
+      "type": "press-logos",
+      "blocks": {
+        "logo-1": {
+          "type": "logo",
+          "settings": {
+            "name": "The Times",
+            "style": "serif-italic"
+          }
+        },
+        "logo-2": {
+          "type": "logo",
+          "settings": {
+            "name": "AARP",
+            "style": "mono-bold"
+          }
+        },
+        "logo-3": {
+          "type": "logo",
+          "settings": {
+            "name": "PREVENTION",
+            "style": "mono-caps"
+          }
+        },
+        "logo-4": {
+          "type": "logo",
+          "settings": {
+            "name": "Men's Health",
+            "style": "serif"
+          }
+        }
+      },
+      "block_order": [
+        "logo-1",
+        "logo-2",
+        "logo-3",
+        "logo-4"
+      ],
+      "disabled": true,
+      "settings": {
+        "show_section": true,
+        "eyebrow": "As featured in"
+      }
+    },
+    "stats-grid": {
+      "type": "stats-grid",
+      "blocks": {
+        "stat-1": {
+          "type": "stat",
+          "settings": {
+            "value": "87%",
+            "caption": "felt meaningful pain relief within 7 days",
+            "value_color": "accent"
+          }
+        },
+        "stat-2": {
+          "type": "stat",
+          "settings": {
+            "value": "18,472",
+            "caption": "verified customer reviews",
+            "value_color": "cream"
+          }
+        },
+        "stat-3": {
+          "type": "stat",
+          "settings": {
+            "value": "4.9 ★",
+            "caption": "average rating across all sizes",
+            "value_color": "cream"
+          }
+        },
+        "stat-4": {
+          "type": "stat",
+          "settings": {
+            "value": "60 days",
+            "caption": "risk-free money-back guarantee",
+            "value_color": "cream"
+          }
+        }
+      },
+      "block_order": [
+        "stat-1",
+        "stat-2",
+        "stat-3",
+        "stat-4"
+      ],
+      "settings": {
+        "show_section": true,
+        "background_style": "dark",
+        "eyebrow": "The numbers",
+        "heading": "<p>Relief that's <em>measured,</em> not promised.</p>",
+        "columns": 2
+      }
+    },
+    "problem-fix": {
+      "type": "problem-fix",
+      "blocks": {
+        "card-1": {
+          "type": "card",
+          "settings": {
+            "card_style": "problem",
+            "eyebrow": "The problem",
+            "heading": "Cartilage is thinning. Inflammation is building.",
+            "body": "<p>Over time, the cushioning that used to absorb shock wears down. Fluid builds up. The joint stiffens. Every step sends a jolt you used to not feel.</p>"
+          }
+        },
+        "card-2": {
+          "type": "card",
+          "settings": {
+            "card_style": "fix",
+            "eyebrow": "The fix",
+            "heading": "Compression + warmth + proprioception.",
+            "body": "<p>Waldon wraps the joint in three things at once: steady pressure to push out swelling, body heat to loosen stiffness, and gentle support so your knee remembers how to move.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "card-1",
+        "card-2"
+      ],
+      "settings": {
+        "show_section": true,
+        "bg_color": "#fbf9f4",
+        "eyebrow": "The thing nobody tells you",
+        "heading": "<p>You shouldn't have to plan your day <em>around your knees.</em></p>",
+        "intro": "<p>The stairs. The grocery aisle. Standing up from the couch. If pain has started picking your routine, your joint needs support — not another pill.</p>"
+      }
+    },
+    "use-cases": {
+      "type": "use-cases",
+      "blocks": {
+        "scene_ffziUt": {
+          "type": "scene",
+          "repeater": "{{ product.metafields.custom.use_cases_scene.value }}",
+          "settings": {
+            "image": "{{ block.repeater.image.value }}",
+            "eyebrow": "{{ block.repeater.eyebrow.value }}",
+            "heading": "{{ block.repeater.heading.value }}",
+            "body": "<p>{{ block.repeater.body.value }}</p>"
+          }
+        }
+      },
+      "block_order": [
+        "scene_ffziUt"
+      ],
+      "settings": {
+        "show_section": true,
+        "bg_color": "#f5f1e8",
+        "eyebrow": "Who it's for",
+        "heading": "<p>Made for <em>your day,</em> not a gym bro's.</p>",
+        "columns_desktop": "2"
+      }
+    },
+    "features-list": {
+      "type": "features-list",
+      "blocks": {
+        "feat-1": {
+          "type": "feature",
+          "settings": {
+            "heading": "Three-zone graduated compression.",
+            "body": "<p>Firmest at the calf, medium at the knee, gentle at the thigh. It pushes fluid up and out — which is why swelling drops within hours, not weeks.</p>",
+            "pill_text": "72% less swelling by week 4"
+          }
+        },
+        "feat-2": {
+          "type": "feature",
+          "settings": {
+            "heading": "Medical-grade knit that breathes.",
+            "body": "<p>4-way stretch nylon with moisture-wicking elastane. Cool enough to wear in bed. Strong enough to hold through a full shift on your feet.</p>",
+            "pill_text": "12-hour comfort wear"
+          }
+        },
+        "feat-3": {
+          "type": "feature",
+          "settings": {
+            "heading": "Silicone grips that actually grip.",
+            "body": "<p>Two bands of medical silicone — one top, one bottom — anchor the sleeve so it doesn't inch down when you climb stairs, garden, or get up from the couch.</p>",
+            "pill_text": "No-slip guarantee"
+          }
+        },
+        "feat-4": {
+          "type": "feature",
+          "settings": {
+            "heading": "Warm the joint, calm the ache.",
+            "body": "<p>The knit traps body heat and holds it against the kneecap. Warmth loosens the joint capsule, which is why mornings stop starting with a grimace.</p>",
+            "pill_text": "Feels like a warm hand on the knee"
+          }
+        }
+      },
+      "block_order": [
+        "feat-1",
+        "feat-2",
+        "feat-3",
+        "feat-4"
+      ],
+      "settings": {
+        "show_section": true,
+        "bg_color": "#fbf9f4",
+        "eyebrow": "What's inside",
+        "heading": "<p>Four things the <em>$12 sleeve</em> doesn't have.</p>"
+      }
+    },
+    "comparison-table": {
+      "type": "comparison-table",
+      "blocks": {
+        "row-1": {
+          "type": "row",
+          "settings": {
+            "feature_name": "Graduated compression zones",
+            "col_a_value": "no",
+            "col_b_value": "yes"
+          }
+        },
+        "row-2": {
+          "type": "row",
+          "settings": {
+            "feature_name": "Medical-grade elastane",
+            "col_a_value": "no",
+            "col_b_value": "yes"
+          }
+        },
+        "row-3": {
+          "type": "row",
+          "settings": {
+            "feature_name": "Stays put on stairs",
+            "col_a_value": "partial",
+            "col_b_value": "yes"
+          }
+        },
+        "row-4": {
+          "type": "row",
+          "settings": {
+            "feature_name": "Breathable for all-day wear",
+            "col_a_value": "no",
+            "col_b_value": "yes"
+          }
+        },
+        "row-5": {
+          "type": "row",
+          "settings": {
+            "feature_name": "Anti-slip silicone bands",
+            "col_a_value": "partial",
+            "col_b_value": "yes"
+          }
+        },
+        "row-6": {
+          "type": "row",
+          "settings": {
+            "feature_name": "60-day money-back",
+            "col_a_value": "no",
+            "col_b_value": "yes"
+          }
+        },
+        "row-7": {
+          "type": "row",
+          "settings": {
+            "feature_name": "Doctor-recommended",
+            "col_a_value": "no",
+            "col_b_value": "yes"
+          }
+        }
+      },
+      "block_order": [
+        "row-1",
+        "row-2",
+        "row-3",
+        "row-4",
+        "row-5",
+        "row-6",
+        "row-7"
+      ],
+      "settings": {
+        "show_section": true,
+        "bg_color": "#f5f1e8",
+        "eyebrow": "Why Waldon",
+        "heading": "<p>Not another <em>pharmacy sleeve.</em></p>",
+        "intro": "<p>What the cheap ones at the drugstore can't do, and what makes ours worth it.</p>",
+        "feature_col_label": "Feature",
+        "col_a_label": "Drugstore",
+        "col_b_label": "Waldon"
+      }
+    },
+    "reviews": {
+      "type": "reviews",
+      "blocks": {
+        "review-1": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Margaret T.",
+            "reviewer_age": 68,
+            "date": "Mar 12",
+            "rating": 5,
+            "headline": "Got my stairs back.",
+            "body": "<p>After months of dreading the stairs to my bedroom, I can honestly say this sleeve gave me my evenings back. I wear it all day around the house. The difference with my osteoarthritis is real — I'm not exaggerating.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 6",
+            "tags": "arthritis,stairs",
+            "verified": true
+          }
+        },
+        "review-2": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "David W.",
+            "reviewer_age": 72,
+            "date": "Feb 28",
+            "rating": 5,
+            "headline": "Post-surgery must-have.",
+            "body": "<p>My surgeon actually suggested compression after my partial knee replacement. Tried two other brands first — both slipped. Waldon stays put, doesn't itch, and the swelling goes down noticeably by mid-morning. Well worth it.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 6",
+            "tags": "post-surgery,swelling",
+            "verified": true
+          }
+        },
+        "review-3": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Linda H.",
+            "reviewer_age": 61,
+            "date": "Feb 19",
+            "rating": 5,
+            "headline": "Sleep through the night again.",
+            "body": "<p>I work retail, 8+ hours on my feet. By evening my knees would throb so badly I couldn't sleep. Started wearing this at home in the evenings and now I sleep straight through. My husband noticed before I did.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 6",
+            "tags": "standing,sleep",
+            "verified": true
+          }
+        },
+        "review-4": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Robert K.",
+            "reviewer_age": 74,
+            "date": "Jan 31",
+            "rating": 5,
+            "headline": "Better than the brace my doctor gave me.",
+            "body": "<p>I've tried hard braces, soft braces, and every compression sock at the pharmacy. This is the first thing that actually stays put without cutting off circulation. Three months in and I'm back to walking the dog every morning.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 8",
+            "tags": "arthritis,walking",
+            "verified": true
+          }
+        },
+        "review-5": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Susan M.",
+            "reviewer_age": 58,
+            "date": "Jan 14",
+            "rating": 5,
+            "headline": "The swelling is actually going down.",
+            "body": "<p>My rheumatologist told me to try compression for the fluid build-up. I was skeptical but within two weeks the puffiness around my knee was visibly smaller. I ordered a second one so I always have a clean one ready.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 4",
+            "tags": "swelling,rheumatoid",
+            "verified": true
+          }
+        },
+        "review-6": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "James P.",
+            "reviewer_age": 66,
+            "date": "Dec 28",
+            "rating": 5,
+            "headline": "Wore it through a 10-hour flight.",
+            "body": "<p>Long-haul flights used to leave my knee so stiff I'd limp through the airport. Wore the Waldon sleeve on a flight to London and walked off the plane like a normal person. I genuinely cannot believe the difference.</p>",
+            "image_1_label": "Before",
+            "image_2_label": "After",
+            "tags": "travel,stiffness",
+            "verified": true
+          }
+        },
+        "review-7": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Carol B.",
+            "reviewer_age": 63,
+            "date": "Dec 11",
+            "rating": 5,
+            "headline": "Finally, something that fits properly.",
+            "body": "<p>I have wide calves and most sleeves either squeeze at the top or bunch at the knee. The sizing chart is accurate — I measured exactly as instructed and the L fits like it was made for me. No bunching, no slipping. Just comfortable support all day.</p>",
+            "image_1_label": "Day 1",
+            "image_2_label": "Week 6",
+            "tags": "fit,comfort",
+            "verified": true
+          }
+        },
+        "review-8": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Thomas A.",
+            "reviewer_age": 70,
+            "date": "Nov 30",
+            "rating": 4,
+            "headline": "Significant improvement in morning stiffness.",
+            "body": "<p>The first week I was not sure. By week three the difference in how my knee feels getting out of bed is remarkable. I take it off to shower and notice immediately. The only reason for 4 stars is I wish it came in more colors.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 5",
+            "tags": "morning-stiffness,daily-wear",
+            "verified": true
+          }
+        },
+        "review-9": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Patricia L.",
+            "reviewer_age": 65,
+            "date": "Nov 18",
+            "rating": 5,
+            "headline": "My physical therapist was impressed.",
+            "body": "<p>I brought it to my PT session to show her. She examined the compression zones and said the construction was genuinely different from most consumer products. That endorsement meant more to me than any ad. Still wearing it six weeks later.</p>",
+            "image_1_label": "Week 2",
+            "image_2_label": "Week 6",
+            "tags": "physical-therapy,quality",
+            "verified": true
+          }
+        },
+        "review-10": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Gary F.",
+            "reviewer_age": 59,
+            "date": "Nov 5",
+            "rating": 5,
+            "headline": "Gardening again without paying for it later.",
+            "body": "<p>I love my garden but an hour of kneeling used to mean two days of swelling. Wore the sleeve last weekend for four hours of planting. Almost no swelling that evening, and I was back out there the next morning. That has not happened in years.</p>",
+            "image_1_label": "Before",
+            "image_2_label": "Day after",
+            "tags": "gardening,swelling",
+            "verified": true
+          }
+        },
+        "review-11": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Nancy O.",
+            "reviewer_age": 67,
+            "date": "Oct 29",
+            "rating": 5,
+            "headline": "Cancelled my cortisone appointment.",
+            "body": "<p>I was booked in for another cortisone shot. Started Waldon three weeks before the appointment date and by the time it came around I genuinely did not feel I needed it. Rescheduled for six months out. My doctor said keep doing whatever I'm doing.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 3",
+            "tags": "inflammation,cortisone",
+            "verified": true
+          }
+        },
+        "review-12": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Kenneth R.",
+            "reviewer_age": 73,
+            "date": "Oct 15",
+            "rating": 5,
+            "headline": "Both knees, no complaints.",
+            "body": "<p>Ordered the pair bundle because both knees have been troublesome since my late 60s. Wearing one on each leg throughout the day. The evenings used to feel brutal — now they just feel like evenings. Worth every cent of the pair price.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 7",
+            "tags": "bilateral,arthritis",
+            "verified": true
+          }
+        },
+        "review-13": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Dorothy S.",
+            "reviewer_age": 71,
+            "date": "Oct 3",
+            "rating": 5,
+            "headline": "Got through a 4-hour museum visit.",
+            "body": "<p>My grandchildren wanted to visit the science museum. In previous years I would have lasted 90 minutes then found a bench and waited. Wore Waldon for the first time that day and did the full four hours. My granddaughter did not even know I had bad knees.</p>",
+            "image_1_label": "Before",
+            "image_2_label": "After",
+            "tags": "walking,daily-life",
+            "verified": true
+          }
+        },
+        "review-14": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Frank M.",
+            "reviewer_age": 56,
+            "date": "Sep 22",
+            "rating": 5,
+            "headline": "Back on the golf course.",
+            "body": "<p>18 holes was just not happening anymore. The walking, the rotation on the swing — my knee would be angry for three days after. Tried Waldon on a whim, played nine holes after two weeks. Played 18 last Saturday. That is all I needed to know.</p>",
+            "image_1_label": "Week 2",
+            "image_2_label": "Week 6",
+            "tags": "golf,sport",
+            "verified": true
+          }
+        },
+        "review-15": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Barbara C.",
+            "reviewer_age": 64,
+            "date": "Sep 10",
+            "rating": 5,
+            "headline": "Wears under trousers invisibly.",
+            "body": "<p>I was worried it would be bulky under work clothes. It is completely invisible under dress trousers. I wear it to the office every day and nobody has any idea. That matters to me more than I expected it to.</p>",
+            "image_1_label": "Day 1",
+            "image_2_label": "Week 4",
+            "tags": "discreet,office",
+            "verified": true
+          }
+        },
+        "review-16": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Harold T.",
+            "reviewer_age": 78,
+            "date": "Aug 28",
+            "rating": 5,
+            "headline": "My wife bought a second one as backup.",
+            "body": "<p>I wore mine so consistently that my wife ordered a second one so there would always be a dry one when I washed the first. We both thought that was funny but also says everything. It has become as much a part of my morning as my coffee.</p>",
+            "image_1_label": "Month 1",
+            "image_2_label": "Month 3",
+            "tags": "daily-wear,routine",
+            "verified": true
+          }
+        },
+        "review-17": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Ruth E.",
+            "reviewer_age": 60,
+            "date": "Aug 14",
+            "rating": 5,
+            "headline": "Washed 12 times, still perfect.",
+            "body": "<p>Quality holds up. I have washed mine on a gentle cycle about a dozen times and the compression feels exactly the same as when it arrived. The silicone grip bands have not loosened at all. I was expecting it to degrade faster — genuinely impressed.</p>",
+            "image_1_label": "Wash 1",
+            "image_2_label": "Wash 12",
+            "tags": "durability,quality",
+            "verified": true
+          }
+        },
+        "review-18": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Walter N.",
+            "reviewer_age": 69,
+            "date": "Aug 2",
+            "rating": 5,
+            "headline": "Bone-on-bone and this still helps.",
+            "body": "<p>My orthopaedic surgeon told me I am bone-on-bone and the only real fix is a replacement. I am not ready for surgery so I am managing. Waldon does not fix the cartilage — nothing will — but it takes the edge off the grinding sensation enough that I can function through a full day.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 8",
+            "tags": "bone-on-bone,management",
+            "verified": true
+          }
+        },
+        "review-19": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Helen G.",
+            "reviewer_age": 55,
+            "date": "Jul 20",
+            "rating": 5,
+            "headline": "Chasing my toddler grandchildren again.",
+            "body": "<p>Two toddler grandchildren who do not slow down. I had been sitting out the park trips for months. Started Waldon and within three weeks I was back on the playground with them. The look on their faces when grandma got on the slide was worth it.</p>",
+            "image_1_label": "Before",
+            "image_2_label": "Week 5",
+            "tags": "active,family",
+            "verified": true
+          }
+        },
+        "review-20": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Arthur B.",
+            "reviewer_age": 77,
+            "date": "Jul 7",
+            "rating": 4,
+            "headline": "Took three weeks but the wait was worth it.",
+            "body": "<p>I did not feel much the first two weeks and nearly returned it. My wife convinced me to give it another week. Week three something shifted — the morning stiffness that had been constant for two years was just gone one morning. I am glad I waited.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 4",
+            "tags": "patience,morning-stiffness",
+            "verified": true
+          }
+        },
+        "review-21": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Shirley P.",
+            "reviewer_age": 62,
+            "date": "Jun 25",
+            "rating": 5,
+            "headline": "Back to walking 10,000 steps.",
+            "body": "<p>My step count had dropped to under 4,000 because every walk ended in pain. I started wearing Waldon on walks and built back up gradually. Hit 10,000 steps last Tuesday for the first time in 18 months. I cried a little, not going to lie.</p>",
+            "image_1_label": "Week 2",
+            "image_2_label": "Week 10",
+            "tags": "walking,fitness",
+            "verified": true
+          }
+        },
+        "review-22": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Raymond J.",
+            "reviewer_age": 68,
+            "date": "Jun 12",
+            "rating": 5,
+            "headline": "Reduced my pain medication.",
+            "body": "<p>I was taking two ibuprofen every morning just to get moving. By week four I was down to one. By week six I stopped altogether on most days. I am not saying it is a replacement for medication — but for me it reduced how much I needed. Talk to your doctor, obviously.</p>",
+            "image_1_label": "Week 2",
+            "image_2_label": "Week 6",
+            "tags": "pain-relief,medication",
+            "verified": true
+          }
+        },
+        "review-23": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Virginia H.",
+            "reviewer_age": 57,
+            "date": "May 30",
+            "rating": 5,
+            "headline": "Works under compression tights too.",
+            "body": "<p>I already wear compression tights for circulation and was not sure if layering would work. I wear the Waldon sleeve under the tights and it is perfectly comfortable — no bunching, no pressure points. The combined effect on swelling has been remarkable.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 5",
+            "tags": "layering,circulation",
+            "verified": true
+          }
+        },
+        "review-24": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Carl W.",
+            "reviewer_age": 72,
+            "date": "May 17",
+            "rating": 5,
+            "headline": "Standing for my grandson's graduation.",
+            "body": "<p>Three-hour outdoor graduation. Standing most of the time. Knew my knee would struggle. Wore Waldon and was genuinely fine. Drove home four hours afterwards. Only minor stiffness by bedtime. A year ago that day would have wiped me out for a week.</p>",
+            "image_1_label": "Event day",
+            "image_2_label": "Next morning",
+            "tags": "events,standing",
+            "verified": true
+          }
+        },
+        "review-25": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Mildred C.",
+            "reviewer_age": 76,
+            "date": "May 4",
+            "rating": 5,
+            "headline": "Gifted one to my sister. She loves it too.",
+            "body": "<p>Bought one for myself, and when my sister visited and saw how I was moving she asked about it. Ordered her one on the spot. She called me two weeks later to say thank you. Now we are both wearing them and comparing notes like we are in a club.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 6",
+            "tags": "gift,family",
+            "verified": true
+          }
+        },
+        "review-26": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Eugene D.",
+            "reviewer_age": 61,
+            "date": "Apr 22",
+            "rating": 5,
+            "headline": "Survived the holiday shopping season.",
+            "body": "<p>I work in a department store and the holiday season is brutal — six hours on hard floors daily for six weeks. Last year I finished December in real pain. This year I wore Waldon every shift. Finished the season with manageable tiredness but zero of the joint pain I had before. Night and day.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Week 6",
+            "tags": "standing,retail",
+            "verified": true
+          }
+        },
+        "review-27": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Phyllis K.",
+            "reviewer_age": 66,
+            "date": "Apr 9",
+            "rating": 5,
+            "headline": "First thing I put on, last thing I take off.",
+            "body": "<p>I put it on before I get out of bed in the morning — that is how much difference those first ten minutes make. My knee is warm and supported before I take a single step. It has just become part of the routine. Cannot imagine mornings without it.</p>",
+            "image_1_label": "Week 1",
+            "image_2_label": "Month 2",
+            "tags": "morning,routine",
+            "verified": true
+          }
+        },
+        "review-28": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Bernard L.",
+            "reviewer_age": 64,
+            "date": "Mar 28",
+            "rating": 5,
+            "headline": "Finally took a proper holiday.",
+            "body": "<p>We had cancelled two holidays in the past two years because I could not face the amount of walking. Booked a week in Portugal after two months with Waldon. Walked cobblestone streets for seven days. My wife keeps saying she has her husband back. That one hit hard.</p>",
+            "image_1_label": "Before trip",
+            "image_2_label": "Day 7",
+            "tags": "travel,walking",
+            "verified": true
+          }
+        }
+      },
+      "block_order": [
+        "review-1",
+        "review-2",
+        "review-3",
+        "review-4",
+        "review-5",
+        "review-6",
+        "review-7",
+        "review-8",
+        "review-9",
+        "review-10",
+        "review-11",
+        "review-12",
+        "review-13",
+        "review-14",
+        "review-15",
+        "review-16",
+        "review-17",
+        "review-18",
+        "review-19",
+        "review-20",
+        "review-21",
+        "review-22",
+        "review-23",
+        "review-24",
+        "review-25",
+        "review-26",
+        "review-27",
+        "review-28"
+      ],
+      "settings": {
+        "show_section": true,
+        "bg_color": "#fbf9f4",
+        "eyebrow": "Real customers",
+        "heading": "<p>18,472 people stopped <em>hurting.</em></p>",
+        "summary_rating": "4.9",
+        "total_reviews": 18472,
+        "distribution_5": 86,
+        "distribution_4": 9,
+        "distribution_3": 3,
+        "distribution_2": 1,
+        "distribution_1": 1,
+        "see_all_url": ""
+      }
+    },
+    "expert-quote": {
+      "type": "expert-quote",
+      "blocks": {
+        "expert-1": {
+          "type": "expert",
+          "settings": {
+            "quote": "<p>\"For the osteoarthritis and post-surgical patients I see, graduated compression is step one. Waldon is the sleeve I actually recommend.\"</p>",
+            "name": "Dr. Evelyn Marsh, DPT, OCS",
+            "credentials": "",
+            "specialty_line": "Orthopedic Physical Therapy · 22 years"
+          }
+        }
+      },
+      "block_order": [
+        "expert-1"
+      ],
+      "settings": {
+        "show_section": true,
+        "bg_color": "#f5f1e8",
+        "eyebrow": "Expert-approved",
+        "show_quote_marks": true
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "show_section": true,
+        "bg_color": "#fbf9f4",
+        "eyebrow": "Questions",
+        "heading": "<p>Everything, <em>answered.</em></p>",
+        "entries": [],
+        "first_item_open": true,
+        "allow_multiple_open": false,
+        "icon_style": "plus-minus"
+      }
+    },
+    "guarantee": {
+      "type": "guarantee",
+      "settings": {
+        "show_section": true,
+        "bg_color": "#1a1815",
+        "badge_number": "60",
+        "badge_label": "Day trial",
+        "heading": "<p>Wear it for two months. <em>Or send it back.</em></p>",
+        "body": "<p>Give your knees 60 days with Waldon. If you don't feel less pain, less swelling, and more freedom — return it for a full refund. Even if you've worn it every day.</p>",
+        "cta_label": "",
+        "cta_url": ""
+      }
+    },
+    "size-guide": {
+      "type": "size-guide",
+      "blocks": {
+        "size-1": {
+          "type": "size_row",
+          "settings": {
+            "size": "S",
+            "range": "13.5 – 15.5\"",
+            "fits_note": "",
+            "highlight": false
+          }
+        },
+        "size-2": {
+          "type": "size_row",
+          "settings": {
+            "size": "M",
+            "range": "15.5 – 17.5\"",
+            "fits_note": "",
+            "highlight": false
+          }
+        },
+        "size-3": {
+          "type": "size_row",
+          "settings": {
+            "size": "L",
+            "range": "17.5 – 19.5\"",
+            "fits_note": "Most popular",
+            "highlight": true
+          }
+        },
+        "size-4": {
+          "type": "size_row",
+          "settings": {
+            "size": "XL",
+            "range": "19.5 – 21.5\"",
+            "fits_note": "",
+            "highlight": false
+          }
+        },
+        "size-5": {
+          "type": "size_row",
+          "settings": {
+            "size": "2XL",
+            "range": "21.5 – 23.5\"",
+            "fits_note": "",
+            "highlight": false
+          }
+        },
+        "size-6": {
+          "type": "size_row",
+          "settings": {
+            "size": "3XL",
+            "range": "23.5 – 25.5\"",
+            "fits_note": "",
+            "highlight": false
+          }
+        }
+      },
+      "block_order": [
+        "size-1",
+        "size-2",
+        "size-3",
+        "size-4",
+        "size-5",
+        "size-6"
+      ],
+      "settings": {
+        "show_section": true,
+        "bg_color": "#fbf9f4",
+        "eyebrow": "Sizing",
+        "heading": "<p>Find your <em>fit.</em></p>",
+        "intro": "<p>Measure the circumference of your thigh, 4 inches above the center of your kneecap. Between sizes? Size down for firmer compression.</p>",
+        "tip_text": "<p>No measuring tape? A piece of string and a ruler works. Measure, then lay the string flat against the ruler. You'll land within half an inch.</p>"
+      }
+    }
+  },
+  "order": [
+    "main-product",
+    "trust-badges",
+    "press-logos",
+    "stats-grid",
+    "problem-fix",
+    "use-cases",
+    "features-list",
+    "comparison-table",
+    "reviews",
+    "expert-quote",
+    "faq",
+    "guarantee",
+    "size-guide"
+  ]
+}

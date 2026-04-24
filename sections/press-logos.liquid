@@ -1,0 +1,80 @@
+{%- if section.settings.show_section -%}
+<section class="pl-section section--press-logos">
+  <div class="pl-inner">
+    <p class="pl-eyebrow">{{ section.settings.eyebrow }}</p>
+    <div class="pl-logos">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'logo' -%}
+          <div class="pl-logo pl-logo--{{ block.settings.style }}" {{ block.shopify_attributes }}>
+            {%- if block.settings.image -%}
+              {{ block.settings.image | image_url: height: 28 | image_tag: alt: block.settings.name, loading: 'lazy', class: 'pl-logo-img' }}
+            {%- else -%}
+              {{ block.settings.name }}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.section--press-logos {
+  border-bottom: 1px solid var(--stone-01);
+  background: var(--paper-00);
+}
+.pl-inner {
+  max-width: var(--content-max, 1120px); margin: 0 auto;
+  padding: 22px 18px; text-align: center;
+}
+.pl-eyebrow {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-muted); margin: 0 0 14px;
+}
+.pl-logos {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: center; gap: 20px 36px;
+  opacity: 0.75;
+}
+.pl-logo {
+  font-size: 15px; color: var(--ink-01); white-space: nowrap; line-height: 1;
+}
+.pl-logo--serif-italic { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 16px; }
+.pl-logo--serif { font-family: var(--font-display); font-weight: 400; font-size: 16px; }
+.pl-logo--mono-bold { font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.08em; font-size: 13px; text-transform: uppercase; }
+.pl-logo--mono-caps { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; }
+.pl-logo-img { max-height: 24px; width: auto; filter: grayscale(1) contrast(0.9); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Press logos",
+  "tag": "section",
+  "class": "section section--press-logos",
+  "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show section", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "As featured in" }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Press logo",
+      "limit": 8,
+      "settings": [
+        { "type": "text", "id": "name", "label": "Publication name", "default": "The Times" },
+        { "type": "select", "id": "style", "label": "Text style",
+          "options": [
+            { "value": "serif-italic", "label": "Serif italic" },
+            { "value": "serif", "label": "Serif" },
+            { "value": "mono-bold", "label": "Mono bold" },
+            { "value": "mono-caps", "label": "Mono caps" }
+          ],
+          "default": "serif-italic" },
+        { "type": "image_picker", "id": "image", "label": "Logo image (optional)" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Press logos" }]
+}
+{% endschema %}

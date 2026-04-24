@@ -1,0 +1,113 @@
+<footer class="wd-footer">
+  <div class="wd-footer-top">
+    <div class="wd-footer-brand">
+      <div class="wd-footer-wordmark">
+        {{ shop.name }}<span class="wd-nav-dot"></span>
+      </div>
+      <p>{{ section.settings.tagline }}</p>
+    </div>
+
+    <div class="wd-footer-cols">
+      <div>
+        {% if section.settings.col1_heading != blank %}
+          <div class="wd-eyebrow">{{ section.settings.col1_heading }}</div>
+        {% endif %}
+        {% for link in section.settings.col1_menu.links %}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {% endfor %}
+      </div>
+
+      <div>
+        {% if section.settings.col2_heading != blank %}
+          <div class="wd-eyebrow">{{ section.settings.col2_heading }}</div>
+        {% endif %}
+        {% for link in section.settings.col2_menu.links %}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {% endfor %}
+      </div>
+
+      <div>
+        {% if section.settings.col3_heading != blank %}
+          <div class="wd-eyebrow">{{ section.settings.col3_heading }}</div>
+        {% endif %}
+        {% for link in section.settings.col3_menu.links %}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="wd-footer-bottom">
+    <span>© {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+    <span>{{ section.settings.disclaimer }}</span>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "t:general.footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Brand tagline",
+      "default": "Move better. Every day."
+    },
+    {
+      "type": "header",
+      "content": "Column 1"
+    },
+    {
+      "type": "text",
+      "id": "col1_heading",
+      "label": "Column 1 heading",
+      "default": "Shop"
+    },
+    {
+      "type": "link_list",
+      "id": "col1_menu",
+      "label": "Column 1 menu"
+    },
+    {
+      "type": "header",
+      "content": "Column 2"
+    },
+    {
+      "type": "text",
+      "id": "col2_heading",
+      "label": "Column 2 heading",
+      "default": "Learn"
+    },
+    {
+      "type": "link_list",
+      "id": "col2_menu",
+      "label": "Column 2 menu"
+    },
+    {
+      "type": "header",
+      "content": "Column 3"
+    },
+    {
+      "type": "text",
+      "id": "col3_heading",
+      "label": "Column 3 heading",
+      "default": "Help"
+    },
+    {
+      "type": "link_list",
+      "id": "col3_menu",
+      "label": "Column 3 menu"
+    },
+    {
+      "type": "header",
+      "content": "Legal"
+    },
+    {
+      "type": "text",
+      "id": "disclaimer",
+      "label": "Legal disclaimer",
+      "default": "Not a substitute for medical advice."
+    }
+  ]
+}
+{% endschema %}

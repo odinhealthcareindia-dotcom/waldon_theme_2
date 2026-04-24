@@ -1,0 +1,91 @@
+<section class="wd-trust-section">
+  <div class="wd-container">
+    <div class="wd-trust">
+      {% for block in section.blocks %}
+        {% if block.type == 'item' %}
+          <div class="wd-trust-item" {{ block.shopify_attributes }}>
+            <i data-lucide="{{ block.settings.icon }}"></i>
+            <div>
+              <div class="wd-trust-title">{{ block.settings.title }}</div>
+              <div class="wd-trust-sub">{{ block.settings.sub }}</div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust bar",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Lucide icon name",
+          "info": "Find icon names at lucide.dev",
+          "default": "shield-check"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "60-night trial"
+        },
+        {
+          "type": "text",
+          "id": "sub",
+          "label": "Sub label",
+          "default": "Return worn or unworn"
+        }
+      ]
+    }
+  ],
+  "settings": [],
+  "presets": [
+    {
+      "name": "Trust bar",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "icon": "shield-check",
+            "title": "60-night trial",
+            "sub": "Return worn or unworn"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "stethoscope",
+            "title": "PT-reviewed",
+            "sub": "Every product"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Free US shipping",
+            "sub": "Orders over $60"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "icon": "wallet",
+            "title": "FSA / HSA eligible",
+            "sub": "At checkout"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

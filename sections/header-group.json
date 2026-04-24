@@ -1,0 +1,23 @@
+{
+  "type": "header",
+  "name": "t:general.header",
+  "sections": {
+    "topbar": {
+      "type": "topbar",
+      "settings": {
+        "announcement": "Free shipping over $60 · 60-night trial · FSA/HSA eligible",
+        "link_1_label": "Find your size",
+        "link_2_label": "Help",
+        "link_3_label": "Sign in"
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {}
+    }
+  },
+  "order": [
+    "topbar",
+    "header"
+  ]
+}

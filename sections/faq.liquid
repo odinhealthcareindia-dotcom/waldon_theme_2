@@ -1,0 +1,255 @@
+{% comment %}
+  FAQ Section — metaobject-bound (type: faq)
+  Data resolution order (mirrors Drive theme pattern):
+    1. product.metafields.custom.faqs.value  (product-level curated list)
+    2. section.settings.entries              (section metaobject_list picker)
+    3. shop.metaobjects.faq.values           (all FAQ entries — store-wide fallback)
+  Fallback blocks render only when all three resolve empty.
+{% endcomment %}
+
+{%- liquid
+  assign entries = product.metafields.custom.faqs.value
+  if entries == blank
+    assign entries = section.settings.entries
+  endif
+  if entries == blank
+    assign entries = shop.metaobjects.faq.values
+  endif
+-%}
+
+{%- assign has_entries = false -%}
+{%- if entries != blank -%}
+  {%- assign has_entries = true -%}
+{%- endif -%}
+{%- if has_entries == false and section.blocks.size > 0 -%}
+  {%- assign has_entries = true -%}
+{%- endif -%}
+
+{%- if has_entries and section.settings.show_section -%}
+<section class="faq-section section--faq" style="background: {{ section.settings.bg_color }};" id="faq">
+  <div class="faq-inner">
+    <p class="faq-eyebrow">{{ section.settings.eyebrow }}</p>
+    <h2 class="faq-title">{{ section.settings.heading }}</h2>
+
+    <div class="faq-list"
+      data-allow-multiple="{{ section.settings.allow_multiple_open }}"
+      data-icon="{{ section.settings.icon_style }}">
+
+      {%- if entries != blank -%}
+        {%- for entry in entries -%}
+          {%- assign entry_id = 'faq-' | append: forloop.index -%}
+          {%- assign is_first = false -%}
+          {%- if forloop.first and section.settings.first_item_open -%}
+            {%- assign is_first = true -%}
+          {%- endif -%}
+          <div class="faq-item{% if is_first %} open{% endif %}">
+            <button class="faq-q"
+              aria-expanded="{{ is_first }}"
+              aria-controls="{{ entry_id }}"
+              type="button">
+              <span>{{ entry.question.value | default: entry.question }}</span>
+              <span class="faq-icon" aria-hidden="true">
+                {%- if section.settings.icon_style == 'chevron' -%}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                {%- else -%}
+                  <svg class="faq-icon-plus" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+                  <svg class="faq-icon-minus" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="7" x2="13" y2="7"/></svg>
+                {%- endif -%}
+              </span>
+            </button>
+            <div class="faq-a" id="{{ entry_id }}" role="region" {% unless is_first %}hidden{% endunless %}>
+              <div class="faq-a-inner">
+                <div class="faq-a-body">{{ entry.answer.value | default: entry.answer }}</div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+
+      {%- elsif section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'fallback_question' -%}
+            {%- assign entry_id = 'faq-fb-' | append: forloop.index -%}
+            {%- assign is_first = false -%}
+            {%- if forloop.first and section.settings.first_item_open -%}{%- assign is_first = true -%}{%- endif -%}
+            <div class="faq-item{% if is_first %} open{% endif %}" {{ block.shopify_attributes }}>
+              <button class="faq-q"
+                aria-expanded="{{ is_first }}"
+                aria-controls="{{ entry_id }}"
+                type="button">
+                <span>{{ block.settings.question }}</span>
+                <span class="faq-icon" aria-hidden="true">
+                  <svg class="faq-icon-plus" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+                  <svg class="faq-icon-minus" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="7" x2="13" y2="7"/></svg>
+                </span>
+              </button>
+              <div class="faq-a" id="{{ entry_id }}" role="region" {% unless is_first %}hidden{% endunless %}>
+                <div class="faq-a-inner"><div class="faq-a-body">{{ block.settings.answer }}</div></div>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.section--faq { border-bottom: 1px solid var(--stone-01); }
+.faq-inner {
+  max-width: 680px; margin: 0 auto;
+  padding: 48px 18px;
+}
+@media (min-width: 768px) { .faq-inner { padding: 72px 48px; } }
+
+.faq-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-muted); margin: 0 0 12px; font-weight: 500;
+}
+.faq-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(24px,5vw,34px); line-height: 1.08; letter-spacing: -0.022em;
+  color: var(--ink-00); margin: 0 0 20px;
+}
+.faq-title p {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 30px; line-height: 1.08; letter-spacing: -0.022em;
+  color: var(--ink-00); margin: 0;
+}
+.faq-title em { font-style: italic; font-weight: 300; color: var(--clay-500); }
+
+.faq-list { display: flex; flex-direction: column; }
+
+.faq-item { border-bottom: 1px solid var(--stone-01); }
+.faq-item:first-child { border-top: 1px solid var(--stone-01); }
+
+.faq-q {
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  gap: 14px; padding: 18px 0;
+  background: none; border: 0; text-align: left;
+  font-family: var(--font-sans); font-size: 16px; font-weight: 500;
+  color: var(--ink-00); cursor: pointer;
+  transition: color 180ms var(--ease-out);
+}
+.faq-q:hover { color: var(--clay-500); }
+
+/* Plus/minus icon */
+.faq-icon { flex: none; display: flex; color: var(--fg-muted); }
+.faq-icon-plus { display: block; }
+.faq-icon-minus { display: none; }
+.faq-item.open .faq-icon-plus { display: none; }
+.faq-item.open .faq-icon-minus { display: block; }
+
+/* Chevron icon */
+.faq-item .faq-icon svg:not(.faq-icon-plus):not(.faq-icon-minus) {
+  transition: transform 280ms var(--ease-out);
+}
+.faq-item.open .faq-icon svg:not(.faq-icon-plus):not(.faq-icon-minus) {
+  transform: rotate(180deg);
+}
+
+/* Answer panel — CSS grid height transition */
+.faq-a {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows 280ms var(--ease-out);
+}
+.faq-item.open .faq-a { grid-template-rows: 1fr; }
+.faq-a[hidden] { display: none; }
+.faq-a-inner {
+  min-height: 0; overflow: hidden;
+}
+.faq-a-body {
+  font-size: 15px; color: var(--fg-body); line-height: 1.55;
+  padding-bottom: 18px;
+}
+.faq-a-body p { margin: 0; }
+{% endstylesheet %}
+
+{% javascript %}
+(function() {
+  var section = document.querySelector('.section--faq');
+  if (!section) return;
+  var list = section.querySelector('.faq-list');
+  if (!list) return;
+  var allowMultiple = list.getAttribute('data-allow-multiple') === 'true';
+
+  /* Remove hidden attrs so CSS grid transition works */
+  section.querySelectorAll('.faq-a').forEach(function(a) {
+    a.removeAttribute('hidden');
+  });
+
+  list.addEventListener('click', function(e) {
+    var btn = e.target.closest('.faq-q');
+    if (!btn) return;
+    var item = btn.closest('.faq-item');
+    if (!item) return;
+    var isOpen = item.classList.contains('open');
+
+    if (!allowMultiple) {
+      list.querySelectorAll('.faq-item.open').forEach(function(i) {
+        if (i !== item) {
+          i.classList.remove('open');
+          i.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    item.classList.toggle('open', !isOpen);
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  /* Keyboard navigation */
+  list.addEventListener('keydown', function(e) {
+    var items = Array.from(list.querySelectorAll('.faq-q'));
+    var idx = items.indexOf(document.activeElement);
+    if (idx === -1) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); items[(idx+1) % items.length].focus(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
+    if (e.key === 'Home') { e.preventDefault(); items[0].focus(); }
+    if (e.key === 'End') { e.preventDefault(); items[items.length-1].focus(); }
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "class": "section section--faq",
+  "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show section", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#FBF9F4" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Questions" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Everything, <em>answered.</em></p>" },
+    {
+      "type": "metaobject_list",
+      "id": "entries",
+      "label": "FAQ entries",
+      "info": "Pulls from the FAQ metaobject. Manage content in Content → Metaobjects → FAQ.",
+      "metaobject_type": "faq",
+      "limit": 20
+    },
+    { "type": "checkbox", "id": "first_item_open", "label": "Open first item by default", "default": true },
+    { "type": "checkbox", "id": "allow_multiple_open", "label": "Allow multiple items open", "default": false },
+    { "type": "select", "id": "icon_style", "label": "Toggle icon",
+      "options": [
+        { "value": "plus-minus", "label": "Plus / minus" },
+        { "value": "chevron", "label": "Chevron" }
+      ],
+      "default": "plus-minus" }
+  ],
+  "blocks": [
+    {
+      "type": "fallback_question",
+      "name": "Fallback question",
+      "limit": 10,
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Will it actually help my arthritis pain?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Most customers feel meaningful relief within the first week. The graduated compression increases blood flow, reduces inflammation, and provides proprioceptive support — which calms the joint. If it's not working for you in 60 days, you send it back. No questions.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "FAQ" }]
+}
+{% endschema %}

@@ -1,0 +1,272 @@
+{%- if section.settings.show_section -%}
+<section class="rv-section section--reviews" style="background: {{ section.settings.bg_color }};">
+  <div class="rv-inner">
+    <p class="rv-eyebrow">{{ section.settings.eyebrow }}</p>
+    <h2 class="rv-title">{{ section.settings.heading }}</h2>
+
+    {%- comment -%} Summary card {%- endcomment -%}
+    <div class="rv-summary">
+      <div class="rv-score">
+        <b class="rv-score__num">{{ section.settings.summary_rating }}</b>
+        <span class="rv-stars" aria-label="{{ section.settings.summary_rating }} out of 5 stars">
+          <span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="on">★</span>
+        </span>
+        <span class="rv-score__label">Verified reviews</span>
+      </div>
+      <div class="rv-bars">
+        {%- assign bar_values = '5,4,3,2,1' | split: ',' -%}
+        {%- assign bar_pcts = section.settings.distribution_5 | append: ',' | append: section.settings.distribution_4 | append: ',' | append: section.settings.distribution_3 | append: ',' | append: section.settings.distribution_2 | append: ',' | append: section.settings.distribution_1 | split: ',' -%}
+        {%- for star in bar_values -%}
+          {%- assign pct = bar_pcts[forloop.index0] -%}
+          <div class="rv-bar">
+            <span class="rv-bar__label">{{ star }}★</span>
+            <div class="rv-bar__track" role="progressbar" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100">
+              <div class="rv-bar__fill" style="width: {{ pct }}%;"></div>
+            </div>
+            <span class="rv-bar__pct">{{ pct }}%</span>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- comment -%} Filter chips {%- endcomment -%}
+    <div class="rv-filters" role="group" aria-label="Filter reviews">
+      <button class="rv-chip active" data-filter="all">All</button>
+      <button class="rv-chip" data-filter="arthritis">Arthritis</button>
+      <button class="rv-chip" data-filter="post-surgery">Post-surgery</button>
+      <button class="rv-chip" data-filter="swelling">Swelling</button>
+      <button class="rv-chip" data-filter="standing">Standing</button>
+      <button class="rv-chip" data-filter="sleep">Sleep</button>
+    </div>
+
+    {%- comment -%} Review cards {%- endcomment -%}
+    <div class="rv-list" id="rv-list">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'review' -%}
+          {%- assign tag_str = block.settings.tags | downcase -%}
+          <article class="rv-card" data-tags="{{ tag_str }}" {{ block.shopify_attributes }}>
+            <div class="rv-card__head">
+              <span class="rv-card__name">
+                {{ block.settings.reviewer_name }}{%- if block.settings.reviewer_age > 0 -%}, {{ block.settings.reviewer_age }}{%- endif -%}
+                {%- if block.settings.verified -%}
+                  <span class="rv-verified">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="2 6 5 9 10 3"/></svg>
+                    VERIFIED BUYER
+                  </span>
+                {%- endif -%}
+              </span>
+              <span class="rv-card__date">{{ block.settings.date }}</span>
+            </div>
+            <div class="rv-stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+              {%- for i in (1..5) -%}
+                {%- if i <= block.settings.rating -%}<span class="on">★</span>{%- else -%}<span>★</span>{%- endif -%}
+              {%- endfor -%}
+            </div>
+            <h4 class="rv-card__headline">{{ block.settings.headline }}</h4>
+
+            {%- if block.settings.image_1 or block.settings.image_2 -%}
+              <div class="rv-card__ba">
+                {%- if block.settings.image_1 -%}
+                  <div class="rv-card__ba-img" data-label="{{ block.settings.image_1_label }}">
+                    {{ block.settings.image_1 | image_url: width: 360 | image_tag: alt: block.settings.image_1_label, loading: 'lazy' }}
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.image_2 -%}
+                  <div class="rv-card__ba-img" data-label="{{ block.settings.image_2_label }}">
+                    {{ block.settings.image_2 | image_url: width: 360 | image_tag: alt: block.settings.image_2_label, loading: 'lazy' }}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            <div class="rv-card__body">{{ block.settings.body }}</div>
+
+            {%- if block.settings.tags != blank -%}
+              <div class="rv-card__tags">
+                {%- assign tag_list = block.settings.tags | split: ',' -%}
+                {%- for tag in tag_list -%}
+                  <span class="rv-card__tag">{{ tag | strip | upcase }}</span>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          </article>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.see_all_url != blank -%}
+      <a href="{{ section.settings.see_all_url }}" class="rv-see-all">
+        Read all {{ section.settings.total_reviews | number_with_delimiter }} reviews
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.section--reviews { border-bottom: 1px solid var(--stone-01); }
+.rv-inner {
+  max-width: var(--content-max, 1120px); margin: 0 auto;
+  padding: 48px 18px;
+}
+@media (min-width: 768px) { .rv-inner { padding: 72px 48px; } }
+
+.rv-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--fg-muted); margin: 0 0 12px; font-weight: 500;
+}
+.rv-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(24px,5vw,34px); line-height: 1.08; letter-spacing: -0.022em;
+  color: var(--ink-00); margin: 0 0 20px;
+}
+.rv-title p{
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 30px; line-height: 1.08; letter-spacing: -0.022em;
+  color: var(--ink-00); margin: 0;
+}
+.rv-title em { font-style: italic; font-weight: 300; color: var(--clay-500); }
+
+/* Summary card */
+.rv-summary {
+  display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center;
+  padding: 18px; background: var(--paper-00);
+  border: 1px solid var(--stone-01); border-radius: var(--radius-lg); margin-bottom: 14px;
+}
+.rv-score { text-align: center; border-right: 1px solid var(--stone-01); padding-right: 18px; }
+.rv-score__num {
+  font-family: var(--font-display); font-size: 44px; font-weight: 400;
+  color: var(--ink-00); letter-spacing: -0.02em; line-height: 1; display: block;
+}
+.rv-stars { font-size: 13px; letter-spacing: 1px; display: block; margin: 4px 0; }
+.rv-stars .on { color: var(--clay-500); }
+.rv-score__label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--fg-muted); display: block; margin-top: 4px;
+}
+.rv-bars { display: flex; flex-direction: column; gap: 5px; }
+.rv-bar { display: grid; grid-template-columns: 18px 1fr 28px; gap: 8px; align-items: center; }
+.rv-bar__label { font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-muted); }
+.rv-bar__track { height: 5px; background: var(--stone-01); border-radius: 3px; overflow: hidden; }
+.rv-bar__fill { height: 100%; background: var(--clay-500); border-radius: 3px; }
+.rv-bar__pct { font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-muted); text-align: right; }
+
+/* Filters */
+.rv-filters { display: flex; gap: 6px; margin: 14px 0; flex-wrap: wrap; }
+.rv-chip {
+  font-family: var(--font-sans); font-size: 12px; padding: 6px 12px;
+  background: var(--paper-00); border: 1px solid var(--stone-01);
+  color: var(--fg-body); border-radius: 999px;
+  transition: all 180ms var(--ease-out);
+}
+.rv-chip:hover { border-color: var(--ink-02); }
+.rv-chip.active { background: var(--ink-00); color: var(--paper-00); border-color: var(--ink-00); }
+
+/* Review cards */
+.rv-list { display: flex; flex-direction: column; gap: 10px; }
+.rv-card {
+  background: var(--paper-00); border: 1px solid var(--stone-01);
+  border-radius: var(--radius-lg); padding: 18px;
+}
+.rv-card[hidden] { display: none; }
+.rv-card__head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+.rv-card__name { font-family: var(--font-sans); font-size: 13px; color: var(--ink-00); font-weight: 500; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.rv-card__date { font-family: var(--font-mono); font-size: 10px; color: var(--fg-subtle); letter-spacing: 0.08em; }
+.rv-verified {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--sage-700);
+}
+.rv-card__headline { font-family: var(--font-display); font-size: 17px; font-weight: 400; margin: 4px 0 6px; color: var(--ink-00); letter-spacing: -0.01em; }
+.rv-card__ba { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 0; }
+.rv-card__ba-img { aspect-ratio: 4/3; border-radius: 6px; overflow: hidden; position: relative; }
+.rv-card__ba-img img { width: 100%; height: 100%; object-fit: cover; }
+.rv-card__ba-img::after {
+  content: attr(data-label); position: absolute; top: 8px; left: 8px;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--paper-00); background: rgba(26,24,21,.7);
+  padding: 2px 7px; border-radius: 3px; font-weight: 500;
+}
+.rv-card__body { font-size: 13.5px; line-height: 1.55; color: var(--fg-body); margin: 0 0 10px; }
+.rv-card__body p { margin: 0; }
+.rv-card__tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.rv-card__tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-subtle); }
+
+/* See all */
+.rv-see-all {
+  display: block; text-align: center; margin-top: 14px; padding: 14px 18px;
+  border: 1px solid var(--stone-01); border-radius: var(--radius-lg);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 500; color: var(--ink-00);
+  text-decoration: none; transition: all 180ms var(--ease-out);
+}
+.rv-see-all:hover { border-color: var(--ink-00); color: var(--ink-00); text-decoration: none; }
+{% endstylesheet %}
+
+{% javascript %}
+(function() {
+  var section = document.querySelector('.section--reviews');
+  if (!section) return;
+  var chips = section.querySelectorAll('.rv-chip');
+  var cards = section.querySelectorAll('.rv-card');
+
+  chips.forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      chips.forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      var filter = chip.getAttribute('data-filter');
+      cards.forEach(function(card) {
+        if (filter === 'all') {
+          card.hidden = false;
+        } else {
+          var tags = card.getAttribute('data-tags') || '';
+          card.hidden = tags.indexOf(filter) === -1;
+        }
+      });
+    });
+  });
+})();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Reviews",
+  "tag": "section",
+  "class": "section section--reviews",
+  "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show section", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#FBF9F4" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Real customers" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>18,472 people stopped <em>hurting.</em></p>" },
+    { "type": "text", "id": "summary_rating", "label": "Overall rating", "default": "4.9" },
+    { "type": "number", "id": "total_reviews", "label": "Total review count", "default": 18472 },
+    { "type": "range", "id": "distribution_5", "min": 0, "max": 100, "step": 1, "label": "5-star %", "default": 86 },
+    { "type": "range", "id": "distribution_4", "min": 0, "max": 100, "step": 1, "label": "4-star %", "default": 9 },
+    { "type": "range", "id": "distribution_3", "min": 0, "max": 100, "step": 1, "label": "3-star %", "default": 3 },
+    { "type": "range", "id": "distribution_2", "min": 0, "max": 100, "step": 1, "label": "2-star %", "default": 1 },
+    { "type": "range", "id": "distribution_1", "min": 0, "max": 100, "step": 1, "label": "1-star %", "default": 1 },
+    { "type": "url", "id": "see_all_url", "label": "See all reviews URL" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "limit": 50,
+      "settings": [
+        { "type": "text", "id": "reviewer_name", "label": "Name", "default": "Margaret T." },
+        { "type": "number", "id": "reviewer_age", "label": "Age (optional)" },
+        { "type": "text", "id": "date", "label": "Date", "default": "Mar 12" },
+        { "type": "range", "id": "rating", "min": 1, "max": 5, "step": 1, "label": "Rating", "default": 5 },
+        { "type": "text", "id": "headline", "label": "Headline", "default": "Got my stairs back." },
+        { "type": "richtext", "id": "body", "label": "Review body", "default": "<p>After months of dreading the stairs to my bedroom, I can honestly say this sleeve gave me my evenings back.</p>" },
+        { "type": "image_picker", "id": "image_1", "label": "Before image" },
+        { "type": "text", "id": "image_1_label", "label": "Before image label", "default": "Week 1" },
+        { "type": "image_picker", "id": "image_2", "label": "After image" },
+        { "type": "text", "id": "image_2_label", "label": "After image label", "default": "Week 6" },
+        { "type": "text", "id": "tags", "label": "Tags (comma separated)", "default": "arthritis,stairs" },
+        { "type": "checkbox", "id": "verified", "label": "Verified buyer", "default": true }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Reviews" }]
+}
+{% endschema %}

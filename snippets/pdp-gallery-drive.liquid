@@ -1,0 +1,326 @@
+{% doc %}
+  Drive-style product media gallery — carousel with thumbnail strip.
+  Drop-in replacement for the hand-rolled gallery in main-product.liquid.
+
+  @param {product} product - The product whose media to display.
+{% enddoc %}
+
+{%- liquid
+  assign selected_product       = product
+  assign selected_variant_media = selected_product.selected_or_first_available_variant.featured_media
+  assign first_3d_model         = selected_product.media | where: 'media_type', 'model' | first
+
+  comment
+    --- Hardcoded gallery settings (carousel + thumbnails) ---
+  endcomment
+  assign media_presentation              = 'carousel'
+  assign slideshow_controls_style        = 'thumbnails'
+  assign slideshow_mobile_controls_style = 'dots'
+  assign thumbnail_position              = 'bottom'
+  assign thumbnail_width                 = 64
+  assign thumbnail_radius                = 4
+  assign media_radius                    = 8
+  assign icons_style                     = 'arrow'
+  assign aspect_ratio                    = 'adapt'
+  assign constrain_to_viewport           = false
+  assign hide_variants                   = false
+  assign video_loop                      = false
+  assign zoom                            = true
+  assign extend_media                    = false
+  assign image_gap                       = 0
+  assign block_id                        = 'pdp-gallery'
+
+  comment
+    Controls visibility
+  endcomment
+  assign controls_on_media        = false
+  assign mobile_controls_on_media = true
+  assign render_slideshow_controls        = true
+  assign render_mobile_slideshow_controls = true
+  assign slideshow_controls_class = 'mobile:hidden'
+
+  comment
+    Thumbnail pagination: no arrows on desktop thumbnails strip
+  endcomment
+  assign pagination_position = 'center'
+  assign icons_position      = 'center'
+  assign render_slideshow_arrows = true
+
+  comment
+    Build sorted media: selected variant first, rest follow
+  endcomment
+  assign sorted_media = '' | split: ','
+  if selected_variant_media
+    assign sorted_media = sorted_media | concat: selected_product.media | where: 'id', selected_variant_media.id
+    for media in selected_product.media
+      if media.id != selected_variant_media.id
+        assign found_media  = selected_product.media | where: 'id', media.id
+        assign sorted_media = sorted_media | concat: found_media
+      endif
+    endfor
+  else
+    assign sorted_media = selected_product.media
+  endif
+
+  assign has_image_drop = sorted_media | has: 'media_type', 'image'
+
+  if sorted_media.size <= 1
+    assign slideshow_class = 'product-media-gallery__slideshow--single-media slideshow--single-media'
+  else
+    assign slideshow_class = ''
+  endif
+
+  comment
+    Sizes: gallery is ~53 % of page width on desktop
+  endcomment
+  assign media_sizes = '(max-width: 749px) 100vw, 53vw'
+-%}
+
+{%- if zoom -%}
+  <script src="{{ 'zoom-dialog.js' | asset_url }}" type="module"></script>
+{%- endif -%}
+{%- if has_image_drop -%}
+  <script src="{{ 'drag-zoom-wrapper.js' | asset_url }}" type="module"></script>
+{%- endif -%}
+
+{% style %}
+  :root { --gallery-media-border-radius: {{ media_radius }}px; }
+{% endstyle %}
+
+<media-gallery
+  class="media-gallery--carousel"
+  style="--thumbnail-width: {{ thumbnail_width }}px; --media-radius: {{ media_radius }}px; --image-gap: {{ image_gap }}px;"
+  data-presentation="{{ media_presentation }}"
+>
+  {%- capture slides -%}
+    {%- for media in sorted_media -%}
+      {%- capture children -%}
+        {%- if zoom -%}
+          {%- capture attributes -%}on:click="#zoom-dialog-{{ block_id }}/open/{{ forloop.index0 }}"{% endcapture -%}
+        {%- endif -%}
+        {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+      {%- endcapture -%}
+      {%- capture class -%}product-media-container product-media-container--{{ media.media_type }}{%- if zoom %} product-media-container--zoomable{%- endif -%}{%- endcapture -%}
+      {%- capture style -%}--media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};{%- endcapture -%}
+      {%- render 'slideshow-slide',
+        index: forloop.index0,
+        children: children,
+        class: class,
+        style: style,
+        attributes: attributes
+      -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- if sorted_media.size > 1 -%}
+    {%- capture controls -%}
+      {%- render 'slideshow-controls',
+        class: slideshow_controls_class,
+        style: slideshow_controls_style,
+        item_count: sorted_media.size,
+        thumbnails: sorted_media,
+        controls_on_media: controls_on_media,
+        pagination_position: pagination_position,
+        aspect_ratio: aspect_ratio,
+        thumbnail_radius: thumbnail_radius
+      -%}
+      {%- render 'slideshow-controls',
+        class: 'desktop:hidden media-gallery__mobile-controls',
+        style: slideshow_mobile_controls_style,
+        item_count: sorted_media.size,
+        thumbnails: sorted_media,
+        controls_on_media: mobile_controls_on_media,
+        pagination_position: 'center',
+        aspect_ratio: aspect_ratio,
+        thumbnail_radius: thumbnail_radius
+      -%}
+    {%- endcapture -%}
+  {%- endif -%}
+
+  {%- if sorted_media.size > 1 -%}
+    {%- capture slideshow_arrows -%}
+      {%- render 'slideshow-arrows', class: 'mobile:hidden', icon_style: icons_style -%}
+    {%- endcapture -%}
+  {%- endif -%}
+
+  {%- render 'slideshow',
+    ref: 'slideshow',
+    class: slideshow_class,
+    slides: slides,
+    slide_count: sorted_media.size,
+    slideshow_arrows: slideshow_arrows,
+    arrows_position: icons_position,
+    controls: controls
+  -%}
+
+  {%- if zoom -%}
+    <zoom-dialog ref="zoomDialogComponent" id="zoom-dialog-{{ block_id }}">
+      <dialog class="dialog-zoomed-gallery__dialog" ref="dialog" on:keydown="/handleKeyDown" scroll-lock>
+        <button type="button" class="button button-unstyled close-button dialog-zoomed-gallery__close-button" aria-label="{{ 'actions.close' | t }}" on:click="/close">
+          <span class="visually-hidden">{{ 'actions.close' | t }}</span>
+          {{- 'icon-close.svg' | inline_asset_content -}}
+        </button>
+        <div class="dialog-thumbnails-list-container">
+          <scroll-hint class="dialog-thumbnails-list list-unstyled" ref="thumbnails">
+            {%- if sorted_media.size > 1 -%}
+              {%- for media in sorted_media -%}
+                {%- assign ar = media.preview_image.aspect_ratio | default: 1.0 -%}
+                <button type="button" class="button button-unstyled dialog-thumbnails-list__thumbnail"
+                  aria-label="{{ 'accessibility.scroll_to' | t: title: media.alt | default: media.media_type }}"
+                  on:click="/handleThumbnailClick/{{ forloop.index0 }}"
+                  on:pointerenter="/handleThumbnailPointerEnter/{{ forloop.index0 }}"
+                  style="--aspect-ratio: {{ ar }}; --gallery-aspect-ratio: {{ ar }};"
+                  {% if forloop.first %}aria-selected="true"{% endif %}
+                >
+                  {{ media.preview_image | image_url: width: 1024 | image_tag: loading: 'lazy', sizes: '110px', alt: media.alt | escape }}
+                </button>
+              {%- endfor -%}
+            {%- endif -%}
+          </scroll-hint>
+        </div>
+        <ul class="dialog-zoomed-gallery list-unstyled">
+          {%- for media in sorted_media -%}
+            <li id="product-{{ media.id }}-{{ forloop.index }}"
+              class="product-media-container product-media-container--{{ media.media_type }}{% if media.media_type == 'image' %} product-media-container--zoomable{% endif %}"
+              style="--media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};"
+              ref="media[]"
+              {% if media.media_type == 'image' %}on:click="/close"{% endif %}
+            >
+              {%- if media.media_type == 'image' -%}
+                <drag-zoom-wrapper class="product-media__drag-zoom-wrapper">
+                  {%- render 'product-media', media: media, sizes: '100vw', loading: 'lazy', is_main_product_media: forloop.first, image_ref: 'image' -%}
+                </drag-zoom-wrapper>
+              {%- else -%}
+                {%- render 'product-media', media: media, sizes: '100vw', loading: 'lazy', is_main_product_media: forloop.first -%}
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </dialog>
+    </zoom-dialog>
+  {%- endif -%}
+
+  {%- if first_3d_model -%}
+    <link id="ModelViewerStyle" rel="stylesheet" href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css" media="print" onload="this.media='all'">
+    <script>
+      window.ProductModel = {
+        loadShopifyXR() {
+          Shopify.loadFeatures([{ name: 'shopify-xr', version: '1.0', onLoad: this.setupShopifyXR.bind(this) }]);
+        },
+        setupShopifyXR(errors) {
+          if (errors) return;
+          if (!window.ShopifyXR) { document.addEventListener('shopify_xr_initialized', () => this.setupShopifyXR()); return; }
+          document.querySelectorAll('[id^="ProductModelJSON-"]').forEach((modelJSON) => { window.ShopifyXR.addModels(JSON.parse(modelJSON.textContent)); modelJSON.remove(); });
+          window.ShopifyXR.setupXRElements();
+        }
+      };
+      window.ProductModel.loadShopifyXR();
+    </script>
+  {%- endif -%}
+</media-gallery>
+
+{%- render 'product-media-gallery-content-styles' -%}
+
+{% stylesheet %}
+/* Drive gallery CSS tokens for Waldon theme compatibility */
+:root {
+  --color-background: #fff;
+  --layer-flat: 1;
+  --layer-raised: 10;
+  --layer-overlay: 100;
+  --minimum-touch-target: 44px;
+  --padding-xs: 4px;
+  --padding-sm: 8px;
+  --padding-md: 12px;
+  --padding-lg: 16px;
+  --gap-2xs: 4px;
+  --animation-speed: 0.2s;
+  --animation-easing: ease;
+  --focus-outline-width: 2px;
+  --focus-outline-offset: 3px;
+  --style-border-width: 1px;
+  --media-border-opacity: 0.2;
+  --spring-d180-b0-duration: 0.45s;
+  --spring-d180-b0-easing: cubic-bezier(0.25, 1, 0.5, 1);
+  --spring-d220-b0-duration: 0.5s;
+  --spring-d220-b0-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring-d300-b0-duration: 0.6s;
+  --spring-d300-b0-easing: cubic-bezier(0.2, 1, 0.3, 1);
+  --slideshow-controls-icon: 32px;
+  --color-border-rgb: 0, 0, 0;
+  --color-primary-button-background: #1a1815;
+  --color-primary-button-text: #fff;
+  --slideshow-icon-padding: 8px;
+}
+
+/* Ensure button-unstyled base */
+.button-unstyled {
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.list-unstyled { list-style: none; margin: 0; padding: 0; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+.flip-x { transform: scaleX(-1); }
+
+/* desktop:hidden / mobile:hidden utility classes */
+@media screen and (min-width: 750px) { .mobile\:hidden { display: none !important; } }
+@media screen and (max-width: 749px) { .desktop\:hidden { display: none !important; } }
+
+/* media-gallery component wrapper */
+media-gallery { display: block; }
+
+/* scroll-hint component */
+scroll-hint { display: block; overflow: auto; }
+
+/* Slideshow arrow button styles for Drive gallery */
+.slideshow-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--minimum-touch-target);
+  height: var(--minimum-touch-target);
+  padding: var(--slideshow-icon-padding);
+  color: var(--ink-00, #1a1815);
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--stone-01, #e8e2d6);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.slideshow-control:hover { background: #fff; }
+.slideshow-control svg { width: 18px; height: 18px; display: block; }
+
+/* Thumbnail strip */
+.slideshow-controls__thumbnails-container { display: block; overflow: hidden; }
+.slideshow-controls__thumbnails {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 12px 0 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.slideshow-controls__thumbnails::-webkit-scrollbar { display: none; }
+.slideshow-controls__thumbnail {
+  width: var(--thumbnail-width, 64px);
+  flex-shrink: 0;
+  border-radius: var(--thumbnail-radius, 4px);
+  border: 2px solid transparent;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  padding: 0;
+  background: var(--paper-01, #f5f1e8);
+}
+.slideshow-controls__thumbnail img { display: block; width: 100%; height: auto; aspect-ratio: var(--aspect-ratio, 1); object-fit: cover; }
+.slideshow-controls__thumbnail[aria-selected='true'],
+.slideshow-controls__thumbnail:hover { border-color: var(--ink-00, #1a1815); }
+
+/* slideshow-controls wrapper */
+slideshow-controls { display: block; }
+slideshow-controls[thumbnails] { display: block; }
+{% endstylesheet %}

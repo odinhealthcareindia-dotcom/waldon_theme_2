@@ -1,0 +1,150 @@
+<section class="wd-concerns-section">
+  <div class="wd-container">
+    <div class="wd-concerns">
+      <div class="wd-concerns-head">
+        {% if section.settings.eyebrow != blank %}
+          <div class="wd-eyebrow">{{ section.settings.eyebrow }}</div>
+        {% endif %}
+        <h2 class="wd-section-title">{{ section.settings.title }}</h2>
+      </div>
+
+      <div class="wd-concern-grid">
+        {% for block in section.blocks %}
+          {% if block.type == 'concern' %}
+            <a
+              href="{{ block.settings.url | default: '/collections/all' }}"
+              class="wd-concern"
+              {{ block.shopify_attributes }}
+            >
+              <div class="wd-concern-icon wd-img-{{ block.settings.tone }}">
+                <i data-lucide="{{ block.settings.icon }}"></i>
+              </div>
+              <div class="wd-concern-body">
+                <div class="wd-concern-name">{{ block.settings.label }}</div>
+                <div class="wd-concern-sub">{{ block.settings.sub }}</div>
+              </div>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Concern strip",
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "type": "concern",
+      "name": "Concern",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Knee"
+        },
+        {
+          "type": "text",
+          "id": "sub",
+          "label": "Sub label",
+          "default": "Sleeves, braces"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Lucide icon name",
+          "info": "Find icon names at lucide.dev",
+          "default": "activity"
+        },
+        {
+          "type": "select",
+          "id": "tone",
+          "label": "Icon background tone",
+          "options": [
+            { "value": "sage",  "label": "Sage" },
+            { "value": "clay",  "label": "Clay" },
+            { "value": "stone", "label": "Stone" },
+            { "value": "brass", "label": "Brass" },
+            { "value": "bone",  "label": "Bone" }
+          ],
+          "default": "sage"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link URL"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop by concern"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Where does it hurt?"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Concern strip",
+      "blocks": [
+        {
+          "type": "concern",
+          "settings": {
+            "label": "Knee",
+            "sub": "Sleeves, braces",
+            "icon": "activity",
+            "tone": "sage"
+          }
+        },
+        {
+          "type": "concern",
+          "settings": {
+            "label": "Back",
+            "sub": "Lumbar, posture",
+            "icon": "move-vertical",
+            "tone": "clay"
+          }
+        },
+        {
+          "type": "concern",
+          "settings": {
+            "label": "Foot & ankle",
+            "sub": "Insoles, wraps",
+            "icon": "footprints",
+            "tone": "stone"
+          }
+        },
+        {
+          "type": "concern",
+          "settings": {
+            "label": "Wrist & hand",
+            "sub": "Braces, gloves",
+            "icon": "hand",
+            "tone": "sage"
+          }
+        },
+        {
+          "type": "concern",
+          "settings": {
+            "label": "Recovery",
+            "sub": "Cold, heat, massage",
+            "icon": "snowflake",
+            "tone": "clay"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

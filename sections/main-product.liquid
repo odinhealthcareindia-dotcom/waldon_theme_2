@@ -1,0 +1,974 @@
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+{%- assign concern_blocks = section.blocks | where: 'type', 'concern' -%}
+{%- assign bundle_blocks  = section.blocks | where: 'type', 'bundle' -%}
+{%- assign size_option  = nil -%}
+{%- assign color_option = nil -%}
+{%- for option in product.options_with_values -%}
+  {%- assign opt_lower = option.name | downcase -%}
+  {%- if opt_lower == 'size' -%}{%- assign size_option = option -%}
+  {%- elsif opt_lower == 'color' or opt_lower == 'colour' -%}{%- assign color_option = option -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{{- 'pdp.css' | asset_url | stylesheet_tag -}}
+<script src="{{ 'pdp.js' | asset_url }}" defer></script>
+
+<div id="pdp">
+
+  {%- if section.settings.show_announcement and section.settings.announcement_text != blank -%}
+  <div class="pdp-announcement">
+    <span><span class="pdp-ember-dot"></span>{{ section.settings.announcement_text }}</span>
+  </div>
+  {%- endif -%}
+
+  <!-- ░░ TWO-COLUMN LAYOUT ░░ -->
+  <div class="pdp-layout">
+
+    <!-- LEFT — Gallery -->
+    <div class="pdp-layout__gallery">
+      <div class="pdp-flag-cluster">
+        {%- if section.settings.badge_left_text != blank -%}
+          <span class="pdp-flag pdp-flag--accent">{{ section.settings.badge_left_text }}</span>
+        {%- endif -%}
+        {%- if section.settings.show_low_stock_badge and section.settings.badge_right_text != blank -%}
+          <span class="pdp-flag pdp-flag--low"><span class="pdp-flag-dot"></span>{{ section.settings.badge_right_text }}</span>
+        {%- endif -%}
+      </div>
+
+      <div class="pdp-gallery-main" id="pdp-gallery-main">
+        {%- if product.media.size > 0 -%}
+          {%- for media in product.media -%}
+            <div class="pdp-gallery-slide{% if forloop.first %} active{% endif %}" data-index="{{ forloop.index0 }}" data-media-id="{{ media.id }}">
+              {%- if media.media_type == 'image' -%}
+                {%- if forloop.first -%}
+                  {{ media | image_url: width: 900 | image_tag: alt: media.alt, loading: 'eager', class: 'pdp-gallery-img' }}
+                {%- else -%}
+                  {{ media | image_url: width: 900 | image_tag: alt: media.alt, loading: 'lazy', class: 'pdp-gallery-img' }}
+                {%- endif -%}
+              {%- elsif media.media_type == 'video' -%}
+                {{ media | video_tag: autoplay: false, loop: true, muted: true, controls: true, class: 'pdp-gallery-img' }}
+              {%- else -%}
+                {{ media | image_url: width: 900 | image_tag: alt: media.alt, class: 'pdp-gallery-img' }}
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <div class="pdp-gallery-slide active" data-index="0">
+            {{ 'product-1' | placeholder_svg_tag: 'pdp-gallery-img pdp-gallery-placeholder' }}
+          </div>
+        {%- endif -%}
+
+        <!-- Prev / Next arrows (visible on desktop) -->
+        {%- if product.media.size > 1 -%}
+          <button class="pdp-gallery-arrow pdp-gallery-arrow--prev" id="pdp-gallery-prev" aria-label="Previous image" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="pdp-gallery-arrow pdp-gallery-arrow--next" id="pdp-gallery-next" aria-label="Next image" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        {%- endif -%}
+
+        <!-- Dots (mobile only, built by JS) -->
+        <div class="pdp-gallery-dots" id="pdp-gallery-dots"></div>
+      </div>
+
+      <!-- Thumbnails -->
+      {%- if product.media.size > 1 -%}
+      <div class="pdp-gallery-thumbs" id="pdp-gallery-thumbs">
+        {%- for media in product.media -%}
+          <button class="pdp-gallery-thumb{% if forloop.first %} active{% endif %}"
+            data-index="{{ forloop.index0 }}"
+            aria-label="{{ 'product.image_index' | t: index: forloop.index }}">
+            {{ media | image_url: width: 160 | image_tag: alt: media.alt, loading: 'lazy' }}
+          </button>
+        {%- endfor -%}
+      </div>
+      {%- endif -%}
+    </div>
+
+    <!-- RIGHT — Product details -->
+    <div class="pdp-layout__details">
+
+      <!-- Meta -->
+      <div class="pdp-meta">
+        <div class="pdp-eyebrow-row">
+          {%- if section.settings.meta_left != blank -%}
+            <span class="pdp-eyebrow">{{ section.settings.meta_left }}</span>
+          {%- else -%}
+            <span class="pdp-eyebrow">{{ product.vendor }}</span>
+          {%- endif -%}
+          {%- if section.settings.press_list != blank -%}
+          <div class="pdp-press-mini">
+            <span>{{ section.settings.meta_right_label }}</span>
+            {%- assign press_items = section.settings.press_list | split: '·' -%}
+            {%- for item in press_items -%}
+              <span>·</span><span>{{ item | strip }}</span>
+            {%- endfor -%}
+          </div>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.title_override != blank -%}
+          <h1 class="pdp-title">{{ section.settings.title_override }}</h1>
+        {%- else -%}
+          <h1 class="pdp-title">{{ product.title }}</h1>
+        {%- endif -%}
+        <div class="pdp-rating-row">
+          {%- assign rating_str = section.settings.rating_value | default: '4.9' -%}
+          {%- assign rating_val = rating_str | times: 1 -%}
+          <span class="pdp-stars" aria-label="{{ rating_val }} {{ 'product.out_of_5' | t }}">
+            {%- for i in (1..5) -%}<span{% if i <= rating_val %} class="on"{% endif %}>★</span>{%- endfor -%}
+          </span>
+          <span class="pdp-rating-text"><b>{{ rating_val }}</b></span>
+          <span class="pdp-rating-sep">·</span>
+          <span class="pdp-rating-text"><b>{{ section.settings.review_count | default: 18472 }}</b> {{ 'product.reviews' | t }}</span>
+          <span class="pdp-rating-sep">·</span>
+          <span class="pdp-verified">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            {{ 'product.verified' | t }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Form -->
+      {% form 'product', product, id: 'pdp-form', novalidate: 'novalidate' %}
+        <input type="hidden" name="id"       id="pdp-variant-id" value="{{ current_variant.id }}">
+        <input type="hidden" name="quantity" id="pdp-quantity"   value="1">
+
+        <!-- Price -->
+        <div class="pdp-offer">
+          <div class="pdp-price-row">
+            <span class="pdp-price" id="pdp-price" data-base="{{ current_variant.price }}">{{ current_variant.price | money }}</span>
+            {%- if current_variant.compare_at_price > current_variant.price -%}
+              <span class="pdp-price-strike" id="pdp-strike">{{ current_variant.compare_at_price | money }}</span>
+              {%- assign save_pct = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price -%}
+              <span class="pdp-price-save" id="pdp-save">{{ 'product.save_pct' | t: pct: save_pct }}</span>
+            {%- endif -%}
+          </div>
+          {%- if section.settings.show_afterpay -%}
+            {%- assign installment_price = current_variant.price | divided_by: 4 | money -%}
+            <p class="pdp-installments">{{ 'product.installments_html' | t: amount: installment_price }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.show_countdown -%}
+          <div class="pdp-countdown" id="pdp-countdown">
+            <div class="pdp-countdown-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="pdp-countdown-text">
+              {%- if section.settings.countdown_label != blank -%}<b>{{ section.settings.countdown_label }}</b>{%- endif -%}
+              {%- if section.settings.countdown_sublabel != blank -%}{{ section.settings.countdown_sublabel }}{%- endif -%}
+            </div>
+            <div class="pdp-countdown-clock">
+              <b id="pdp-cd-h">02</b><b id="pdp-cd-m">47</b><b id="pdp-cd-s">12</b>
+            </div>
+          </div>
+          {%- endif -%}
+        </div>
+
+        <!-- Built For -->
+        {%- assign meta_concerns = product.metafields.custom.built_for.value -%}
+        {%- assign show_built_for = false -%}
+        {%- if concern_blocks.size > 0 or meta_concerns != blank or section.settings.show_built_for -%}
+          {%- assign show_built_for = true -%}
+        {%- endif -%}
+        {%- if show_built_for -%}
+        <div class="pdp-built-for">
+          <div class="pdp-built-for__heading">{{ section.settings.built_for_heading | default: 'Built for' }}</div>
+          <div class="pdp-built-for__grid">
+            {%- if meta_concerns != blank and meta_concerns.size > 0 -%}
+              {%- for item in meta_concerns -%}
+                <div class="pdp-built-for__item">
+                  <span class="pdp-built-for__check" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  {{ item.label.value | default: item.label }}
+                </div>
+              {%- endfor -%}
+            {%- elsif concern_blocks.size > 0 -%}
+              {%- for block in concern_blocks -%}
+                <div class="pdp-built-for__item" {{ block.shopify_attributes }}>
+                  <span class="pdp-built-for__check" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  {{ block.settings.label }}
+                </div>
+              {%- endfor -%}
+            {%- else -%}
+              {%- assign default_concerns = 'Arthritis & joint pain,Swelling & fluid retention,Stiffness in the morning,Post-surgery recovery,Pain on the stairs,Standing all day,Aching while sleeping,Bone-on-bone grinding' | split: ',' -%}
+              {%- for label in default_concerns -%}
+                <div class="pdp-built-for__item">
+                  <span class="pdp-built-for__check" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  {{ label }}
+                </div>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        </div>
+        {%- endif -%}
+
+        <!-- Variants -->
+        <section class="pdp-variants">
+
+          {%- if size_option -%}
+          <div class="pdp-variant-block">
+            <div class="pdp-variant-head">
+              {%- assign size_opt_idx = size_option.position | minus: 1 -%}
+              {%- assign size_label_text = section.settings.size_label | default: size_option.name -%}
+              <span class="pdp-variant-label">{{ size_label_text }}
+                <b id="pdp-size-label">— {{ current_variant.options[size_opt_idx] }}</b></span>
+              {%- if section.settings.size_guide_text != blank -%}
+                <button type="button" class="pdp-variant-help" id="pdp-size-guide-btn">{{ section.settings.size_guide_text }}</button>
+              {%- endif -%}
+            </div>
+            <div class="pdp-sizes" role="group" aria-label="{{ 'product.select_size' | t }}">
+              {%- for value in size_option.values -%}
+                {%- assign sz_avail = false -%}
+                {%- for v in product.variants -%}
+                  {%- if v.available and v.options contains value -%}{%- assign sz_avail = true -%}{%- endif -%}
+                {%- endfor -%}
+                <button type="button"
+                  class="pdp-size{% if current_variant.options contains value %} active{% endif %}{% unless sz_avail %} oos{% endunless %}"
+                  data-option-name="{{ size_option.name | escape }}"
+                  data-option-value="{{ value | escape }}"
+                  {% unless sz_avail %}aria-disabled="true"{% endunless %}
+                  aria-label="{{ value }}">{{ value }}</button>
+              {%- endfor -%}
+            </div>
+          </div>
+          {%- endif -%}
+
+          {%- if color_option -%}
+          <div class="pdp-variant-block">
+            <div class="pdp-variant-head">
+              {%- assign color_opt_idx = color_option.position | minus: 1 -%}
+              {%- assign color_label_text = section.settings.color_label | default: color_option.name -%}
+              <span class="pdp-variant-label">{{ color_label_text }}
+                <b id="pdp-color-label">— {{ current_variant.options[color_opt_idx] }}</b></span>
+            </div>
+            <div class="pdp-colors" role="group" aria-label="{{ 'product.select_color' | t }}">
+              {%- for value in color_option.values -%}
+                {%- assign vl = value | downcase -%}
+                {%- if vl contains 'pink' or vl contains 'blush' or vl contains 'rose' -%}{%- assign sw = '#E8A0A0' -%}
+                {%- elsif vl contains 'black' or vl == 'ink' -%}{%- assign sw = '#1A1815' -%}
+                {%- elsif vl contains 'white' or vl contains 'ivory' or vl contains 'cream' -%}{%- assign sw = '#F5F1E8' -%}
+                {%- elsif vl contains 'clay' or vl contains 'terra' or vl contains 'rust' or vl contains 'burnt' -%}{%- assign sw = '#A85E3A' -%}
+                {%- elsif vl contains 'sage' or vl contains 'olive' -%}{%- assign sw = '#6B7860' -%}
+                {%- elsif vl contains 'green' or vl contains 'emerald' or vl contains 'forest' -%}{%- assign sw = '#3D6048' -%}
+                {%- elsif vl contains 'red' or vl contains 'cherry' or vl contains 'crimson' -%}{%- assign sw = '#C0392B' -%}
+                {%- elsif vl contains 'orange' or vl contains 'apricot' -%}{%- assign sw = '#E07B39' -%}
+                {%- elsif vl contains 'yellow' or vl contains 'gold' or vl contains 'butter' -%}{%- assign sw = '#D4A843' -%}
+                {%- elsif vl contains 'blue' or vl contains 'navy' or vl contains 'cobalt' or vl contains 'indigo' -%}{%- assign sw = '#2C4A7C' -%}
+                {%- elsif vl contains 'sky' or vl contains 'powder' or vl contains 'baby blue' -%}{%- assign sw = '#7BAFD4' -%}
+                {%- elsif vl contains 'purple' or vl contains 'lavender' or vl contains 'violet' or vl contains 'plum' -%}{%- assign sw = '#7B5EA7' -%}
+                {%- elsif vl contains 'brown' or vl contains 'chocolate' or vl contains 'mocha' or vl contains 'camel' -%}{%- assign sw = '#7B5040' -%}
+                {%- elsif vl contains 'tan' or vl contains 'sand' or vl contains 'beige' or vl contains 'nude' -%}{%- assign sw = '#C4A882' -%}
+                {%- elsif vl contains 'grey' or vl contains 'gray' or vl contains 'slate' or vl contains 'charcoal' -%}{%- assign sw = '#6B6B6B' -%}
+                {%- elsif vl contains 'silver' -%}{%- assign sw = '#A8A8A8' -%}
+                {%- else -%}{%- assign sw = '#A8A193' -%}
+                {%- endif -%}
+                <button type="button"
+                  class="pdp-color{% if current_variant.options contains value %} active{% endif %}"
+                  data-option-name="{{ color_option.name | escape }}"
+                  data-option-value="{{ value | escape }}"
+                  aria-label="{{ value }}">
+                  <span class="pdp-color-swatch" style="background:{{ sw }};"></span>
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+          {%- endif -%}
+
+          {%- for option in product.options_with_values -%}
+            {%- assign ol = option.name | downcase -%}
+            {%- unless ol == 'size' or ol == 'color' or ol == 'colour' -%}
+            <div class="pdp-variant-block">
+              <div class="pdp-variant-head">
+                {%- assign other_opt_idx = option.position | minus: 1 -%}
+                <span class="pdp-variant-label">{{ option.name }}
+                  <b>— {{ current_variant.options[other_opt_idx] }}</b></span>
+              </div>
+              <div class="pdp-sizes" role="group" aria-label="{{ option.name }}">
+                {%- for value in option.values -%}
+                  <button type="button"
+                    class="pdp-size{% if current_variant.options contains value %} active{% endif %}"
+                    data-option-name="{{ option.name | escape }}"
+                    data-option-value="{{ value | escape }}"
+                    aria-label="{{ value }}">{{ value }}</button>
+                {%- endfor -%}
+              </div>
+            </div>
+            {%- endunless -%}
+          {%- endfor -%}
+
+        </section>
+
+        <!-- Bundle & Save -->
+        {%- if bundle_blocks.size > 0 -%}
+        <div class="pdp-bundle-wrap">
+          <div class="pdp-bundle-heading">{{ section.settings.bundle_heading | default: 'Bundle & save' }}</div>
+          <div class="pdp-bundles" role="group" aria-label="{{ section.settings.bundle_heading | default: 'Bundle & save' }}">
+            {%- for block in bundle_blocks -%}
+              <button type="button"
+                class="pdp-bundle-card{% if block.settings.popular %} pdp-bundle-card--active{% endif %}"
+                data-qty="{{ block.settings.qty }}"
+                data-price="{{ block.settings.price | times: 100 }}"
+                {{ block.shopify_attributes }}>
+                <div class="pdp-bundle-card__radio">
+                  <span class="pdp-bundle-card__radio-dot"></span>
+                </div>
+                <div class="pdp-bundle-card__body">
+                  <div class="pdp-bundle-card__top">
+                    <span class="pdp-bundle-card__name">{{ block.settings.label }}</span>
+                    {%- if block.settings.tag != blank -%}
+                      <span class="pdp-bundle-card__tag pdp-bundle-card__tag--{{ block.settings.tag_type }}">{{ block.settings.tag }}</span>
+                    {%- endif -%}
+                  </div>
+                  {%- if block.settings.sub != blank -%}
+                    <div class="pdp-bundle-card__sub">{{ block.settings.sub }}</div>
+                  {%- endif -%}
+                  <div class="pdp-bundle-card__price-row">
+                    <div class="pdp-bundle-card__prices">
+                      {%- if block.settings.strike > 0 -%}
+                        <span class="pdp-bundle-card__strike">${{ block.settings.strike }}</span>
+                      {%- endif -%}
+                      <span class="pdp-bundle-card__price">${{ block.settings.price }}</span>
+                    </div>
+                    <span class="pdp-bundle-card__unit">${{ block.settings.unit_price }} each</span>
+                  </div>
+                </div>
+              </button>
+            {%- endfor -%}
+          </div>
+        </div>
+        {%- endif -%}
+
+        <!-- Add to bag -->
+        <div class="pdp-add">
+          <button type="submit" name="add" id="pdp-add-btn"
+            class="pdp-add-btn{% unless current_variant.available %} pdp-add-btn--unavailable{% endunless %}"
+            {% unless current_variant.available %}disabled{% endunless %}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            {%- if current_variant.available -%}
+              {{ section.settings.atc_text | default: 'Add to bag' }}
+            {%- else -%}
+              {{ section.settings.sold_out_text | default: 'Sold out' }}
+            {%- endif -%}
+            <span class="pdp-add-btn-price" id="pdp-add-price">{{ current_variant.price | money }}</span>
+          </button>
+          {%- if section.settings.show_payment_icons -%}
+          <div class="pdp-pays">
+            <b>{{ 'product.secure_checkout' | t }}</b>
+            <div class="pdp-pays-row">
+              <span>Visa</span><span>MC</span><span>Amex</span><span>PayPal</span><span>Shop Pay</span>
+            </div>
+          </div>
+          {%- endif -%}
+        </div>
+
+        <!-- Trust badges -->
+        {%- assign trust_badge_blocks = section.blocks | where: 'type', 'trust_badge' -%}
+        {%- if trust_badge_blocks.size > 0 -%}
+        <div class="pdp-trust">
+          {%- for block in trust_badge_blocks -%}
+            <div class="pdp-trust-badge" {{ block.shopify_attributes }}>
+              <span class="pdp-trust-icon" aria-hidden="true">
+                {%- case block.settings.icon -%}
+                  {%- when 'truck' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  {%- when 'shield-check' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                  {%- when 'refresh-cw' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                  {%- when 'star' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  {%- else -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+                {%- endcase -%}
+              </span>
+              <span class="pdp-trust-title">{{ block.settings.title }}</span>
+              {%- if block.settings.subtitle != blank -%}
+                <span class="pdp-trust-subtitle">{{ block.settings.subtitle }}</span>
+              {%- endif -%}
+            </div>
+            {%- unless forloop.last -%}
+              <span class="pdp-trust-divider" aria-hidden="true"></span>
+            {%- endunless -%}
+          {%- endfor -%}
+        </div>
+        {%- endif -%}
+
+      {% endform %}
+
+    </div><!-- /.pdp-layout__details -->
+
+  </div><!-- /.pdp-layout -->
+
+</div><!-- /#pdp -->
+
+<!-- ░░ STICKY BAR ░░ -->
+<div class="pdp-sticky" id="pdp-sticky" aria-hidden="true">
+  <div class="pdp-sticky-info">
+    <div class="pdp-sticky-price" id="pdp-sticky-price">
+      {{ current_variant.price | money }}
+      {%- if current_variant.compare_at_price > current_variant.price -%}
+        <span class="pdp-sticky-strike">{{ current_variant.compare_at_price | money }}</span>
+      {%- endif -%}
+    </div>
+    <div class="pdp-sticky-meta">{{ product.title }}</div>
+  </div>
+  <button type="button" class="pdp-sticky-btn" id="pdp-sticky-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    {{ section.settings.atc_text | default: 'Add to bag' }}
+  </button>
+</div>
+
+<!-- ░░ TOAST ░░ -->
+<div class="pdp-toast" id="pdp-toast" role="status" aria-live="polite">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="pdp-toast-text">{{ 'product.added_to_bag' | t }}</span>
+</div>
+
+{%- if section.settings.show_live_proof -%}
+<div class="pdp-live" id="pdp-live" aria-live="polite">
+  <div class="pdp-live-dot" aria-hidden="true">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  </div>
+  <div class="pdp-live-text">
+    <b id="pdp-live-name">Margaret from TX</b> just ordered
+    <span id="pdp-live-time">2 min ago</span>
+  </div>
+</div>
+{%- endif -%}
+
+{% stylesheet %}
+
+/* ── Desktop two-column layout ── */
+.pdp-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  #pdp {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .pdp-announcement {
+    margin-left: -40px;
+    margin-right: -40px;
+  }
+
+  .pdp-layout {
+    grid-template-columns: 53% 1fr;
+    gap: 56px;
+    align-items: start;
+    padding-top: 32px;
+  }
+
+  /* Gallery column — sticky while details scroll */
+  .pdp-layout__gallery {
+    position: sticky;
+    top: 88px;
+  }
+
+  /* Hide mobile dots on desktop */
+  .pdp-gallery-dots {
+    display: none;
+  }
+
+  /* Show arrows on desktop — overrides the default display:none below */
+  .pdp-gallery-arrow {
+    display: flex !important;
+  }
+
+  /* Thumbnails — horizontal strip below main image */
+  .pdp-gallery-thumbs {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .pdp-gallery-thumbs::-webkit-scrollbar { display: none; }
+
+  .pdp-gallery-thumb {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1.5px solid transparent;
+    transition: border-color 0.15s;
+    padding: 0;
+    background: var(--paper-01, #f5f1e8);
+  }
+  .pdp-gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .pdp-gallery-thumb.active,
+  .pdp-gallery-thumb:hover {
+    border-color: var(--ink-00, #1a1815);
+  }
+
+  /* Details column */
+  .pdp-layout__details {
+    padding-top: 0;
+  }
+
+  /* Taller main image on desktop */
+  .pdp-gallery-main {
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--paper-01, #f5f1e8);
+  }
+  .pdp-gallery-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+}
+
+/* ── Prev / Next arrows ── */
+.pdp-gallery-arrow {
+  display: none; /* shown via media query above */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--stone-01, #e0d9cc);
+  color: var(--ink-00, #1a1815);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.pdp-gallery-arrow:hover {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+}
+.pdp-gallery-arrow--prev { left: 10px; }
+.pdp-gallery-arrow--next { right: 10px; }
+
+/* Ensure main image container is relative for arrow positioning */
+.pdp-gallery-main { position: relative; }
+
+/* ── Built For ── */
+.pdp-built-for {
+  margin: 16px 0;
+  padding: 20px 18px 14px;
+}
+.pdp-built-for__heading {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: 10px;
+}
+.pdp-built-for__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.pdp-built-for__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--ink-00, #1a1815);
+  line-height: 1.3;
+  background: #dde8d9;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.pdp-built-for__check {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #3d6048;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Bundle & Save ── */
+.pdp-bundle-wrap {
+  margin: 20px 0 0;
+  padding: 20px 18px 14px;
+}
+.pdp-bundle-heading {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: 10px;
+}
+.pdp-bundles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pdp-bundle-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--paper-00, #faf8f5);
+  border: 1.5px solid var(--stone-01, #e0d9cc);
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.pdp-bundle-card--active {
+  background: #fdf0e8;
+  border-color: #a85e3a;
+}
+.pdp-bundle-card__radio {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid #c5bdb4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  transition: border-color 0.15s;
+}
+.pdp-bundle-card--active .pdp-bundle-card__radio {
+  border-color: #a85e3a;
+}
+.pdp-bundle-card__radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.15s;
+}
+.pdp-bundle-card--active .pdp-bundle-card__radio-dot {
+  background: #a85e3a;
+}
+.pdp-bundle-card__body {
+  flex: 1;
+  min-width: 0;
+}
+.pdp-bundle-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.pdp-bundle-card__name {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-00, #1a1815);
+  line-height: 1.3;
+}
+.pdp-bundle-card__tag {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.pdp-bundle-card__tag--save {
+  background: #dde8d9;
+  color: #3d6048;
+}
+.pdp-bundle-card__tag--best {
+  background: #a85e3a;
+  color: #fff;
+}
+.pdp-bundle-card__sub {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: var(--fg-muted, #8a8172);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.pdp-bundle-card__price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.pdp-bundle-card__prices {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.pdp-bundle-card__strike {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--fg-muted, #8a8172);
+  text-decoration: line-through;
+}
+.pdp-bundle-card__price {
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--ink-00, #1a1815);
+  line-height: 1;
+}
+.pdp-bundle-card__unit {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  color: var(--fg-muted, #8a8172);
+  white-space: nowrap;
+}
+
+/* ── Trust badges ── */
+.pdp-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 16px 0 4px;
+  border-top: 1px solid var(--stone-01, #e0d9cc);
+  margin-top: 16px;
+}
+.pdp-trust-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+  padding: 8px 16px;
+  flex: 1;
+  min-width: 80px;
+}
+.pdp-trust-icon { color: var(--clay-500, #a85e3a); display: flex; }
+.pdp-trust-title {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-00, #1a1815);
+  line-height: 1.25;
+}
+.pdp-trust-subtitle {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.pdp-trust-divider {
+  display: block;
+  width: 1px;
+  height: 32px;
+  background: var(--stone-01, #e0d9cc);
+  flex: none;
+  align-self: center;
+}
+
+/* ── Mobile thumbnail scroll ── */
+@media (max-width: 899px) {
+  .pdp-layout__gallery {
+    overflow: visible;
+  }
+  .pdp-gallery-thumbs {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    width: 100vw;
+    max-width: 100%;
+    box-sizing: border-box;
+    gap: 6px;
+    padding: 6px 8px;
+    scrollbar-width: none;
+  }
+  .pdp-gallery-thumbs::-webkit-scrollbar { display: none; }
+  .pdp-gallery-thumb {
+    flex: 0 0 60px !important;
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    max-width: 60px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+{% endstylesheet %}
+
+{% javascript %}
+
+(function () {
+  var cards = document.querySelectorAll('.pdp-bundle-card');
+  var qtyInput   = document.getElementById('pdp-quantity');
+  var priceEl    = document.getElementById('pdp-price');
+  var addPriceEl = document.getElementById('pdp-add-price');
+  var stickyPriceEl = document.getElementById('pdp-sticky-price');
+
+  function formatMoney(cents) {
+    var dollars = (cents / 100).toFixed(2).replace(/\.00$/, '');
+    return '$' + dollars;
+  }
+
+  function selectCard(card) {
+    cards.forEach(function (c) { c.classList.remove('pdp-bundle-card--active'); });
+    card.classList.add('pdp-bundle-card--active');
+
+    var qty   = parseInt(card.dataset.qty, 10) || 1;
+    var price = parseInt(card.dataset.price, 10) || 0;
+
+    if (qtyInput) qtyInput.value = qty;
+    if (price > 0) {
+      var formatted = formatMoney(price);
+      if (priceEl)       priceEl.textContent    = formatted;
+      if (addPriceEl)    addPriceEl.textContent  = formatted;
+      if (stickyPriceEl) stickyPriceEl.textContent = formatted;
+    }
+  }
+
+  cards.forEach(function (card) {
+    card.addEventListener('click', function () { selectCard(card); });
+  });
+
+  var activeCard = document.querySelector('.pdp-bundle-card--active');
+  if (activeCard) selectCard(activeCard);
+})();
+(function () {
+  var btn = document.getElementById('pdp-size-guide-btn');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    var target = document.getElementById('size-guide');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+})();
+{% endjavascript %}
+
+<!-- Product JSON for JS -->
+<script type="application/json" id="pdp-product-json">{{ product | json }}</script>
+
+{% schema %}
+{
+  "name": "t:general.product",
+  "settings": [
+    { "type": "header", "content": "Announcement" },
+    { "type": "checkbox", "id": "show_announcement", "label": "Show announcement bar", "default": false },
+    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "Free shipping on orders over $75 · 60-day money-back guarantee" },
+    { "type": "header", "content": "Badges" },
+    { "type": "text", "id": "badge_left_text", "label": "Left badge text", "default": "Waldon № 01" },
+    { "type": "checkbox", "id": "show_low_stock_badge", "label": "Show low-stock badge", "default": true },
+    { "type": "text", "id": "badge_right_text", "label": "Low-stock badge text", "default": "Low stock" },
+    { "type": "header", "content": "Product meta" },
+    { "type": "text", "id": "meta_left", "label": "Left eyebrow text", "default": "№ 01 · Mobility" },
+    { "type": "text", "id": "meta_right_label", "label": "Press label", "default": "AS SEEN IN" },
+    { "type": "text", "id": "press_list", "label": "Press names (· separated)", "default": "NYT · Prevention · AARP" },
+    { "type": "text", "id": "title_override", "label": "Title override (leave blank to use product title)" },
+    { "type": "text", "id": "rating_value", "label": "Rating value (e.g. 4.9)", "default": "4.9" },
+    { "type": "number", "id": "review_count", "label": "Review count", "default": 18472 },
+    { "type": "header", "content": "Offer" },
+    { "type": "checkbox", "id": "show_afterpay", "label": "Show installment line", "default": true },
+    { "type": "checkbox", "id": "show_countdown", "label": "Show countdown timer", "default": true },
+    { "type": "text", "id": "countdown_label", "label": "Countdown label", "default": "Sale ends tonight." },
+    { "type": "text", "id": "countdown_sublabel", "label": "Countdown sub-label", "default": "Free shipping on orders over $75." },
+    { "type": "header", "content": "Variant labels" },
+    { "type": "text", "id": "size_label", "label": "Size option label", "default": "Size" },
+    { "type": "text", "id": "size_guide_text", "label": "Size guide link text", "default": "Measure my thigh" },
+    { "type": "text", "id": "color_label", "label": "Color option label", "default": "Color" },
+    { "type": "text", "id": "bundle_heading", "label": "Bundle section heading", "default": "Bundle & save" },
+    { "type": "header", "content": "Add to cart" },
+    { "type": "text", "id": "atc_text", "label": "Add to cart button text", "default": "Add to bag" },
+    { "type": "text", "id": "sold_out_text", "label": "Sold out text", "default": "Sold out" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true },
+    { "type": "header", "content": "Built for" },
+    { "type": "checkbox", "id": "show_built_for", "label": "Show built-for checklist", "default": true },
+    { "type": "text", "id": "built_for_heading", "label": "Heading", "default": "Built for" },
+    { "type": "paragraph", "content": "Add 'Concern' blocks below to populate the list. Falls back to product metafield 'custom.built_for', then hardcoded defaults." },
+    { "type": "header", "content": "Social proof" },
+    { "type": "checkbox", "id": "show_live_proof", "label": "Show live purchase notification", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "concern",
+      "name": "Concern",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Arthritis & joint pain" }
+      ]
+    },
+    {
+      "type": "bundle",
+      "name": "Bundle option",
+      "settings": [
+        { "type": "number", "id": "qty",        "label": "Quantity",            "default": 1 },
+        { "type": "text",   "id": "label",      "label": "Label",               "default": "Single sleeve" },
+        { "type": "text",   "id": "sub",        "label": "Sub-label",           "default": "Good to try it out" },
+        { "type": "number", "id": "price",      "label": "Price ($)",           "default": 54 },
+        { "type": "number", "id": "strike",     "label": "Original price ($)",  "default": 79 },
+        { "type": "text",   "id": "unit_price", "label": "Unit price (text)",   "default": "54.00" },
+        { "type": "text",   "id": "tag",        "label": "Tag label (optional)" },
+        {
+          "type": "select", "id": "tag_type", "label": "Tag style",
+          "options": [
+            { "value": "save", "label": "Save (green)" },
+            { "value": "best", "label": "Best value (clay)" }
+          ],
+          "default": "save"
+        },
+        { "type": "checkbox", "id": "popular", "label": "Default selected", "default": false }
+      ]
+    },
+    {
+      "type": "trust_badge",
+      "name": "Trust badge",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck (shipping)" },
+            { "value": "shield-check", "label": "Shield (guarantee)" },
+            { "value": "refresh-cw", "label": "Arrows (returns)" },
+            { "value": "star", "label": "Star (rating)" }
+          ],
+          "default": "truck"
+        },
+        { "type": "text", "id": "title", "label": "Title", "default": "Free shipping" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Over $75" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main product"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

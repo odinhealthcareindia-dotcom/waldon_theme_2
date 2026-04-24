@@ -1,0 +1,187 @@
+{
+  "accessibility": {
+    "scroll_to": "Scroll to {{ title }}",
+    "slide_status": "Slide {{ index }} of {{ length }}",
+    "slideshow_pause": "Pause slideshow",
+    "slideshow_play": "Play slideshow",
+    "play_model": "View 3D model",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "actions": {
+    "close": "Close",
+    "zoom_media": "Zoom image {{ index }}",
+    "view_in_your_space": "View in your space"
+  },
+  "404": {
+    "title": "404",
+    "not_found": "Page not found.",
+    "back_to_shopping": "Back to shopping"
+  },
+  "blog": {
+    "article_comments": "Comments",
+    "article_metadata_html": "{{ date }} by {{ author }}",
+    "comment_form_body": "Comment",
+    "comment_form_email": "Email",
+    "comment_form_name": "Name",
+    "comment_form_submit": "Post",
+    "comment_form_title": "Add a comment"
+  },
+  "cart": {
+    "checkout": "Checkout",
+    "title": "Cart",
+    "update": "Update",
+    "remove": "Remove"
+  },
+  "customers": {
+    "login": {
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "title": "Login"
+    }
+  },
+  "collections": {
+    "title": "Collections"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Add to Apple Wallet",
+    "card": "Gift card",
+    "expired": "This gift card has expired",
+    "expires_on": "Expires on {{ expires_on }}",
+    "use_at_checkout": "Use this gift card at checkout"
+  },
+  "password": {
+    "title": "This shop is private",
+    "password": "Password",
+    "enter": "Enter"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search articles, pages, or products",
+    "submit": "Search",
+    "no_results_html": "No results found for {{ terms }}",
+    "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "product": {
+    "add_to_bag": "Add to bag",
+    "added_to_bag": "Added to bag",
+    "sold_out": "Sold out",
+    "image_index": "Image {{ index }}",
+    "save_pct": "Save {{ pct }}%",
+    "installments_html": "Or 4 × {{ amount }} with Afterpay",
+    "select_color": "Select color",
+    "low_stock": "Only {{ count }} left",
+    "verified": "Verified",
+    "reviews": "reviews",
+    "built_for": "Built for",
+    "bundle_save": "Save {{ pct }}%",
+    "secure_checkout": "Secure checkout",
+    "free_shipping": "Free shipping over $50",
+    "day_guarantee": "{{ days }}-day guarantee",
+    "sale_ends": "Sale ends in",
+    "the_problem": "The problem",
+    "the_fix": "The fix",
+    "out_of_5": "out of 5",
+    "verified_buyer": "Verified buyer",
+    "verified_reviews": "Verified reviews",
+    "real_customers": "Real customers",
+    "expert_approved": "Expert approved",
+    "questions": "Frequently asked questions",
+    "sizing": "Size guide",
+    "size_label": "Size",
+    "color_label": "Color",
+    "quantity": "Quantity",
+    "select_size": "Select size",
+    "most_popular": "Most popular",
+    "best_value": "Best value",
+    "pack_single": "1 pack",
+    "pack_double": "2 pack",
+    "pack_triple": "3 pack",
+    "announcement": "Free shipping on orders over $75 · 60-day money-back guarantee",
+    "doctor_trusted": "Doctor trusted",
+    "as_seen_in": "As seen in",
+    "loading": "Adding…",
+    "added": "Added to bag",
+    "error": "Something went wrong. Please try again.",
+    "measure_my_thigh": "Measure my thigh",
+    "bundle_and_save": "Bundle & save",
+    "single_unit": "each",
+    "pay_with": "Pay with"
+  },
+  "sections": {
+    "main_product": {
+      "name": "Main product",
+      "settings": {
+        "announcement_text": { "label": "Announcement text" },
+        "badge_left_text": { "label": "Gallery badge (left)" },
+        "badge_right_text": { "label": "Low stock badge text" },
+        "atc_text": { "label": "Add to bag button text" },
+        "sold_out_text": { "label": "Sold out text" }
+      }
+    },
+    "trust_badges": {
+      "name": "Trust badges"
+    },
+    "press_logos": {
+      "name": "Press logos"
+    },
+    "stats_grid": {
+      "name": "Stats grid"
+    },
+    "problem_fix": {
+      "name": "Problem / fix"
+    },
+    "use_cases": {
+      "name": "Use cases"
+    },
+    "features_list": {
+      "name": "Features list"
+    },
+    "comparison_table": {
+      "name": "Comparison table"
+    },
+    "reviews": {
+      "name": "Reviews",
+      "settings": {
+        "see_all": "Read all {{ count }} reviews",
+        "verified_reviews": "Verified reviews",
+        "filter_all": "All"
+      }
+    },
+    "expert_quote": {
+      "name": "Expert quote"
+    },
+    "faq": {
+      "name": "FAQ"
+    },
+    "guarantee": {
+      "name": "Guarantee"
+    },
+    "size_guide": {
+      "name": "Size guide"
+    }
+  },
+  "general": {
+    "header": "Header",
+    "footer": "Footer",
+    "typography": "Typography",
+    "layout": "Layout",
+    "colors": "Colors",
+    "fonts": "Fonts"
+  },
+  "labels": {
+    "menu": "Menu",
+    "page_width": "Page width",
+    "page_margin": "Page margin",
+    "background": "Background",
+    "foreground": "Foreground",
+    "input_corner_radius": "Input corner radius"
+  },
+  "options": {
+    "page_width": {
+      "narrow": "Narrow (90rem)",
+      "wide": "Wide (110rem)"
+    }
+  }
+}

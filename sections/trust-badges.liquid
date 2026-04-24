@@ -1,0 +1,101 @@
+{%- if section.settings.show_section -%}
+<section class="tb-section section--trust-badges">
+  <div class="tb-inner">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'badge' -%}
+        <div class="tb-badge" {{ block.shopify_attributes }}>
+          <span class="tb-icon" aria-hidden="true">
+            {%- case block.settings.icon -%}
+              {%- when 'truck' -%}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              {%- when 'shield-check' -%}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              {%- when 'refresh-cw' -%}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+              {%- when 'star' -%}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              {%- else -%}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+            {%- endcase -%}
+          </span>
+          <span class="tb-badge-title">{{ block.settings.title }}</span>
+          <span class="tb-badge-subtitle">{{ block.settings.subtitle }}</span>
+        </div>
+        {%- unless forloop.last -%}
+          {%- if section.settings.show_dividers -%}
+            <span class="tb-divider" aria-hidden="true"></span>
+          {%- endif -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.section--trust-badges {
+  border-top: 1px solid var(--stone-01);
+  border-bottom: 1px solid var(--stone-01);
+  background: var(--paper-00);
+}
+.tb-inner {
+  max-width: var(--content-max, 1120px); margin: 0 auto;
+  padding: 20px 18px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; flex-wrap: wrap;
+}
+.tb-badge {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; text-align: center; padding: 8px 20px; flex: 1; min-width: 100px;
+}
+.tb-icon { color: var(--clay-500); display: flex; }
+.tb-badge-title {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+  color: var(--ink-00); line-height: 1.25;
+}
+.tb-badge-subtitle {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--fg-muted);
+}
+.tb-divider {
+  display: block; width: 1px; height: 36px; background: var(--stone-01); flex: none;
+  align-self: center;
+}
+@media (max-width: 480px) {
+  .tb-inner { flex-direction: row; gap: 0; }
+  .tb-badge { padding: 8px 12px; font-size: 11px; }
+  .tb-badge-title { font-size: 11px; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Trust badges",
+  "tag": "section",
+  "class": "section section--trust-badges",
+  "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show section", "default": true },
+    { "type": "checkbox", "id": "show_dividers", "label": "Show dividers between badges", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "limit": 6,
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck (shipping)" },
+            { "value": "shield-check", "label": "Shield (guarantee)" },
+            { "value": "refresh-cw", "label": "Arrows (returns)" },
+            { "value": "star", "label": "Star (rating)" }
+          ],
+          "default": "truck" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Free shipping" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Over $75" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Trust badges" }]
+}
+{% endschema %}

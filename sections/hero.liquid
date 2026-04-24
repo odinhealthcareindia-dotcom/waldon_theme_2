@@ -1,0 +1,236 @@
+<section class="wd-hero2-section">
+  <div class="wd-container">
+    <div class="wd-hero2">
+
+      <!-- Left: copy -->
+      <div class="wd-hero2-copy">
+        {% if section.settings.eyebrow != blank %}
+          <div class="wd-eyebrow">{{ section.settings.eyebrow }}</div>
+        {% endif %}
+
+        <h1 class="wd-hero2-title">
+          {{ section.settings.heading_pre }} <em>{{ section.settings.heading_em }}</em>.<br>
+          {{ section.settings.heading_line2 }}
+        </h1>
+
+        {% if section.settings.body_text != blank %}
+          <p class="wd-hero2-body">{{ section.settings.body_text }}</p>
+        {% endif %}
+
+        <div class="wd-hero2-actions">
+          <a href="{{ section.settings.cta_url }}" class="wd-btn wd-btn-primary wd-btn-lg">
+            {{ section.settings.cta_label }}
+            <i data-lucide="arrow-right"></i>
+          </a>
+          {% if section.settings.trial_label != blank %}
+            <span class="wd-hero2-stock">
+              <i data-lucide="shield-check"></i>
+              {{ section.settings.trial_label }}
+            </span>
+          {% endif %}
+        </div>
+
+        {% if section.blocks.size > 0 %}
+          <div class="wd-hero2-meta">
+            {% for block in section.blocks %}
+              {% if block.type == 'stat' %}
+                <div {{ block.shopify_attributes }}>
+                  <b>{{ block.settings.value }}</b>
+                  <span>{{ block.settings.label }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Right: featured product card -->
+      <a href="{{ section.settings.card_url }}" class="wd-hero2-card">
+        {% if section.settings.card_badge != blank %}
+          <span class="wd-flag">{{ section.settings.card_badge }}</span>
+        {% endif %}
+
+        <div class="wd-hero2-img wd-img-{{ section.settings.card_tone }}">
+          {% if section.settings.card_image != blank %}
+            {{ section.settings.card_image | image_url: width: 800 | image_tag: loading: 'eager', widths: '400, 600, 800' }}
+          {% else %}
+            <span class="wd-mono-caption">{{ section.settings.card_ref }}</span>
+          {% endif %}
+        </div>
+
+        <div class="wd-hero2-card-body">
+          <div class="wd-eyebrow">{{ section.settings.card_ref }} · {{ section.settings.card_category }}</div>
+          <h3 class="wd-card-title">{{ section.settings.card_name }}</h3>
+          <p class="wd-hero2-card-lede">{{ section.settings.card_tagline }}</p>
+          <div class="wd-hero2-card-foot">
+            <span class="wd-price">${{ section.settings.card_price }}</span>
+            <span class="wd-btn wd-btn-primary">
+              Shop <i data-lucide="arrow-right"></i>
+            </span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "94%"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "report less pain"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Orthopedic support · designed with PTs"
+    },
+    {
+      "type": "text",
+      "id": "heading_pre",
+      "label": "Heading — word before italic",
+      "default": "Move"
+    },
+    {
+      "type": "text",
+      "id": "heading_em",
+      "label": "Heading — italic word",
+      "default": "better"
+    },
+    {
+      "type": "text",
+      "id": "heading_line2",
+      "label": "Heading — second line",
+      "default": "Every day."
+    },
+    {
+      "type": "textarea",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "Compression, bracing, and recovery for knees, backs, wrists, and feet. Clinically considered, comfortably worn."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label",
+      "default": "Shop by concern"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA URL",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "trial_label",
+      "label": "Trial badge text",
+      "default": "60-night trial"
+    },
+    {
+      "type": "header",
+      "content": "Featured product card"
+    },
+    {
+      "type": "text",
+      "id": "card_badge",
+      "label": "Badge text",
+      "default": "Bestseller"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_image",
+      "label": "Product image (optional)"
+    },
+    {
+      "type": "select",
+      "id": "card_tone",
+      "label": "Placeholder image tone",
+      "options": [
+        { "value": "sage",   "label": "Sage" },
+        { "value": "clay",   "label": "Clay" },
+        { "value": "stone",  "label": "Stone" },
+        { "value": "brass",  "label": "Brass" },
+        { "value": "slate",  "label": "Slate" },
+        { "value": "bone",   "label": "Bone" }
+      ],
+      "default": "sage"
+    },
+    {
+      "type": "text",
+      "id": "card_ref",
+      "label": "Product ref",
+      "default": "WO-01"
+    },
+    {
+      "type": "text",
+      "id": "card_category",
+      "label": "Category",
+      "default": "Knee"
+    },
+    {
+      "type": "text",
+      "id": "card_name",
+      "label": "Product name",
+      "default": "Knee compression sleeve"
+    },
+    {
+      "type": "text",
+      "id": "card_tagline",
+      "label": "Tagline",
+      "default": "Daily support for runners, walkers, desk-bound knees."
+    },
+    {
+      "type": "text",
+      "id": "card_price",
+      "label": "Price (display only)",
+      "default": "48"
+    },
+    {
+      "type": "url",
+      "id": "card_url",
+      "label": "Card link URL",
+      "default": "/collections/all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero",
+      "blocks": [
+        {
+          "type": "stat",
+          "settings": { "value": "94%",    "label": "report less pain" }
+        },
+        {
+          "type": "stat",
+          "settings": { "value": "12wk",   "label": "clinical study" }
+        },
+        {
+          "type": "stat",
+          "settings": { "value": "4.8★",   "label": "5,800+ reviews" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
