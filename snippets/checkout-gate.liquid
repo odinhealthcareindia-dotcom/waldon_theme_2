@@ -1,0 +1,73 @@
+{%- comment -%}
+  Checkout gate: routes logged-out users to login with a return URL, then
+  renders the normal checkout affordance for signed-in customers.
+
+  Usage:
+    {% render 'checkout-gate',
+       return_url: '/checkout',
+       label: 'cart.checkout' | t,
+       as: 'input',
+       name: 'checkout' %}
+
+    {% render 'checkout-gate',
+       return_url: '/checkout',
+       label: 'cart.checkout' | t,
+       class: 'button button--primary',
+       type: 'submit',
+       name: 'checkout' %}
+
+  Accepts:
+    return_url  (string, required) URL to return to after login
+    label       (string, required) pre-translated button text
+    as          (string, optional) 'button' (default) or 'input'
+    class       (string, optional) extra CSS classes
+    id          (string, optional) DOM id
+    type        (string, optional) 'button' (default) or 'submit' — button render only
+    name        (string, optional) form field name
+    value       (string, optional) form field value — button render only
+    guest_label (string, optional) override the guest-state label (pre-translated)
+
+  Guest state always renders an <a> (even when as: 'input'), since an
+  <input> cannot navigate. Unsaved form data in the surrounding <form>
+  will not be submitted when a guest follows the login link.
+{%- endcomment -%}
+
+{%- liquid
+  assign render_as = as | default: 'button'
+  assign btn_class = class | default: ''
+  assign btn_id = id | default: ''
+  assign btn_type = type | default: 'button'
+  assign guest_text = guest_label | default: 'customer.login_to_checkout' | t
+-%}
+
+{%- if customer -%}
+  {%- if render_as == 'input' -%}
+    <input
+      type="submit"
+      value="{{ label }}"
+      {% if btn_class != blank %}class="{{ btn_class }}"{% endif %}
+      {% if btn_id != blank %}id="{{ btn_id }}"{% endif %}
+      {% if name %}name="{{ name }}"{% endif %}
+      data-checkout-gate="authed">
+  {%- else -%}
+    <button
+      type="{{ btn_type }}"
+      {% if btn_class != blank %}class="{{ btn_class }}"{% endif %}
+      {% if btn_id != blank %}id="{{ btn_id }}"{% endif %}
+      {% if name %}name="{{ name }}"{% endif %}
+      {% if value %}value="{{ value }}"{% endif %}
+      data-checkout-gate="authed">
+      {{ label }}
+    </button>
+  {%- endif -%}
+{%- else -%}
+  <a
+    href="{{ routes.account_login_url }}?return_url={{ return_url | url_encode }}"
+    {% if btn_class != blank %}class="{{ btn_class }}"{% endif %}
+    {% if btn_id != blank %}id="{{ btn_id }}"{% endif %}
+    role="button"
+    data-checkout-gate="guest"
+    data-return-url="{{ return_url | escape }}">
+    {{ guest_text }}
+  </a>
+{%- endif -%}

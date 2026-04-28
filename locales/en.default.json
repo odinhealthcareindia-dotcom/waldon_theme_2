@@ -31,7 +31,24 @@
     "checkout": "Checkout",
     "title": "Cart",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "product": "Product",
+    "product_id": "Product ID",
+    "size": "Size",
+    "quantity": "Quantity",
+    "price": "Price",
+    "decrease_quantity": "Decrease quantity",
+    "increase_quantity": "Increase quantity",
+    "discount": "Discount",
+    "delivery": "Delivery",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "promo_label": "Have a promo code?",
+    "promo_placeholder": "Enter discount code",
+    "apply_discount": "Apply Discount",
+    "back_to_shop": "Back to Shop",
+    "continue_shopping": "Continue Shopping",
+    "empty": "Your cart is empty."
   },
   "customers": {
     "login": {
@@ -40,6 +57,13 @@
       "submit": "Sign in",
       "title": "Login"
     }
+  },
+  "customer": {
+    "login_to_checkout": "Sign in to checkout",
+    "login_to_buy": "Sign in to buy",
+    "login_required_message": "Please sign in to complete your order.",
+    "account": "Account",
+    "log_in": "Sign in"
   },
   "collections": {
     "title": "Collections"

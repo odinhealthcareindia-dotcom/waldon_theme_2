@@ -37,6 +37,15 @@
     <button class="wd-icon-btn" aria-label="Search">
       <i data-lucide="search"></i>
     </button>
+    {%- if customer -%}
+      <a href="{{ routes.account_url }}" class="wd-icon-btn" aria-label="{{ 'customer.account' | t }}">
+        <i data-lucide="user"></i>
+      </a>
+    {%- else -%}
+      <a href="{{ routes.account_login_url }}" class="wd-icon-btn" aria-label="{{ 'customer.log_in' | t }}">
+        <i data-lucide="user"></i>
+      </a>
+    {%- endif -%}
     <a href="{{ routes.cart_url }}" class="wd-icon-btn wd-cart-btn" aria-label="Bag">
       <i data-lucide="shopping-bag"></i>
       {% if cart.item_count > 0 %}

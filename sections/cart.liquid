@@ -1,37 +1,633 @@
-{% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
+{%- comment -%}
+  Cart section — table layout with AJAX qty/remove, summary cards,
+  promo input, dual CTAs. Uses checkout-gate for auth-aware checkout.
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
-{% endcomment %}
+{%- endcomment -%}
 
-<h1>{{ 'cart.title' | t }}</h1>
+{%- liquid
+  assign delivery_fee_cents = section.settings.delivery_fee | times: 100
+  assign discount_amount_cents = 0
+  for discount in cart.cart_level_discount_applications
+    assign discount_amount_cents = discount_amount_cents | plus: discount.total_allocated_amount
+  endfor
+  assign total_cents = cart.items_subtotal_price | plus: delivery_fee_cents | minus: discount_amount_cents
+-%}
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+<section
+  class="cart-section"
+  data-cart-section
+  data-delivery-cents="{{ delivery_fee_cents }}"
+  data-discount-cents="{{ discount_amount_cents }}"
+  aria-labelledby="cart-heading">
+  <div class="cart-section__inner">
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+    <h1 id="cart-heading" class="cart-section__heading">
+      {{ section.settings.heading | default: 'My Shopping Cart' }}
+    </h1>
+
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post" data-cart-form novalidate>
+
+        {%- comment -%} ── Items ── {%- endcomment -%}
+        <div class="cart-items" data-cart-items>
+          <div class="cart-items__head" aria-hidden="true">
+            <span>{{ 'cart.product' | t | default: 'Product' }}</span>
+            <span>{{ 'cart.size' | t | default: 'Size' }}</span>
+            <span>{{ 'cart.quantity' | t | default: 'Quantity' }}</span>
+            <span>{{ 'cart.price' | t | default: 'Price' }}</span>
+            <span class="visually-hidden">{{ 'cart.remove' | t }}</span>
+          </div>
+
+          {%- for item in cart.items -%}
+            <article
+              class="cart-item"
+              data-cart-item
+              data-key="{{ item.key }}"
+              data-unit-price="{{ item.final_price }}">
+              <div class="cart-item__product">
+                <a href="{{ item.url }}" class="cart-item__thumb" tabindex="-1" aria-hidden="true">
+                  {%- if item.image -%}
+                    {{ item.image | image_url: width: 240 | image_tag:
+                       loading: 'lazy',
+                       width: 120,
+                       height: 120,
+                       alt: item.product.title,
+                       class: 'cart-item__img' }}
+                  {%- else -%}
+                    {{ 'product-1' | placeholder_svg_tag: 'cart-item__img cart-item__img--placeholder' }}
+                  {%- endif -%}
+                </a>
+                <div class="cart-item__info">
+                  <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
+                  <span class="cart-item__id">{{ 'cart.product_id' | t | default: 'Product ID' }}: {{ item.variant.id }}</span>
+                </div>
+              </div>
+
+              <div class="cart-item__size" data-cell-label="{{ 'cart.size' | t | default: 'Size' }}">
+                {{- item.variant.option1 | default: '—' -}}
+              </div>
+
+              <div class="cart-item__qty" data-cell-label="{{ 'cart.quantity' | t | default: 'Quantity' }}">
+                <button
+                  type="button"
+                  class="cart-item__qty-btn"
+                  data-qty-decrement
+                  aria-label="{{ 'cart.decrease_quantity' | t | default: 'Decrease quantity' }}">−</button>
+                <span class="cart-item__qty-value" data-qty-value aria-live="polite">{{ item.quantity }}</span>
+                <button
+                  type="button"
+                  class="cart-item__qty-btn"
+                  data-qty-increment
+                  aria-label="{{ 'cart.increase_quantity' | t | default: 'Increase quantity' }}">+</button>
+              </div>
+
+              <div class="cart-item__price" data-cell-label="{{ 'cart.price' | t | default: 'Price' }}">
+                <span data-line-price>{{ item.final_line_price | money }}</span>
+              </div>
+
+              <button
+                type="button"
+                class="cart-item__remove"
+                data-remove
+                aria-label="{{ 'cart.remove' | t }} {{ item.product.title }}">×</button>
+            </article>
+          {%- endfor -%}
+        </div>
+
+        {%- comment -%} ── Summary cards ── {%- endcomment -%}
+        <div class="cart-summary">
+          <div class="cart-summary__card">
+            <div class="cart-summary__row">
+              <span>{{ 'cart.discount' | t | default: 'Discount' }}</span>
+              <span data-discount>{{ discount_amount_cents | money }}</span>
+            </div>
+            <div class="cart-summary__row">
+              <span>{{ 'cart.delivery' | t | default: 'Delivery' }}</span>
+              <span data-delivery>{{ delivery_fee_cents | money }}</span>
+            </div>
+          </div>
+          <div class="cart-summary__card">
+            <div class="cart-summary__row">
+              <span>{{ 'cart.subtotal' | t | default: 'Subtotal' }}</span>
+              <span data-subtotal>{{ cart.items_subtotal_price | money }}</span>
+            </div>
+            <div class="cart-summary__row cart-summary__row--total">
+              <span>{{ 'cart.total' | t | default: 'Total' }}</span>
+              <span data-total>{{ total_cents | money }}</span>
+            </div>
+          </div>
+        </div>
+
+        {%- comment -%} ── Promo ── {%- endcomment -%}
+        <div class="cart-promo">
+          <label for="cart-promo-input" class="cart-promo__label">
+            {{ 'cart.promo_label' | t | default: 'Have a promo code?' }}
+          </label>
+          <div class="cart-promo__row">
+            <input
+              type="text"
+              id="cart-promo-input"
+              class="cart-promo__input"
+              data-promo-input
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="{{ 'cart.promo_placeholder' | t | default: 'Enter discount code' }}">
+            <button
+              type="button"
+              class="cart-promo__btn"
+              data-promo-apply>
+              {{ 'cart.apply_discount' | t | default: 'Apply Discount' }}
+            </button>
+          </div>
+        </div>
+
+        {%- comment -%} ── CTAs ── {%- endcomment -%}
+        <div class="cart-cta">
+          <a href="{{ routes.all_products_collection_url }}" class="cart-cta__btn cart-cta__btn--dark">
+            {{ 'cart.back_to_shop' | t | default: 'Back to Shop' }}
+          </a>
+          {% render 'checkout-gate',
+             return_url: '/checkout',
+             label: 'cart.checkout' | t,
+             as: 'input',
+             name: 'checkout',
+             class: 'cart-cta__btn cart-cta__btn--primary' %}
+        </div>
+      </form>
+    {%- endif -%}
+
+    <div class="cart-empty" data-cart-empty {% if cart.item_count > 0 %}hidden{% endif %}>
+      <p class="cart-empty__title">{{ 'cart.empty' | t | default: 'Your cart is empty.' }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="cart-cta__btn cart-cta__btn--dark cart-empty__cta">
+        {{ 'cart.continue_shopping' | t | default: 'Continue Shopping' }}
+      </a>
+    </div>
+
+  </div>
+</section>
+
+{% stylesheet %}
+.cart-section {
+  padding: var(--section-pad-md, 56px) 18px;
+  background: var(--bg, #fff);
+  color: var(--fg, #1a1815);
+  font-family: var(--font-sans);
+}
+@media (min-width: 768px) {
+  .cart-section { padding: var(--section-pad-lg, 80px) clamp(24px, 5vw, 64px); }
+}
+.cart-section__inner {
+  max-width: var(--content-max, 1120px);
+  margin: 0 auto;
+}
+.cart-section__heading {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(28px, 5vw, var(--fs-2xl, 36px));
+  line-height: var(--lh-tight, 1.08);
+  letter-spacing: var(--tracking-tight, -0.02em);
+  text-align: center;
+  color: var(--fg, #1a1815);
+  margin: 0 0 var(--space-7, 48px);
+}
+
+/* ── Items table ────────────────────────────────── */
+.cart-items {
+  border-top: 1px solid var(--border, #e4ded1);
+  margin-bottom: var(--space-6, 32px);
+}
+.cart-items__head,
+.cart-item {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) 0.7fr 1fr 0.9fr 40px;
+  align-items: center;
+  gap: var(--space-4, 16px);
+  padding: var(--space-4, 16px) 0;
+  border-bottom: 1px solid var(--border, #e4ded1);
+}
+.cart-items__head {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs, 12px);
+  letter-spacing: var(--tracking-wide, 0.04em);
+  text-transform: uppercase;
+  color: var(--fg-muted, #6b6760);
+  padding: var(--space-3, 12px) 0;
+}
+.cart-item {
+  font-size: var(--fs-sm, 14px);
+  color: var(--fg-body, #3a3731);
+  transition: opacity var(--dur-md, 260ms) var(--ease-out, ease);
+}
+.cart-item--removing { opacity: 0; pointer-events: none; }
+
+.cart-item__product { display: flex; align-items: center; gap: var(--space-4, 16px); min-width: 0; }
+.cart-item__thumb {
+  flex: none;
+  width: 70px; height: 80px;
+  border-radius: var(--radius-md, 6px);
+  background: var(--bg-sunken, #f5f1e8);
+  overflow: hidden;
+  text-decoration: none;
+  display: block;
+}
+.cart-item__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cart-item__img--placeholder { padding: 8px; }
+.cart-item__info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.cart-item__title {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--fs-base, 16px);
+  color: var(--fg, #1a1815);
+  text-decoration: none;
+  line-height: var(--lh-snug, 1.2);
+}
+.cart-item__title:hover { color: var(--accent, #a85e3a); }
+.cart-item__id {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs, 12px);
+  color: var(--fg-subtle, #9a958c);
+}
+.cart-item__size { color: var(--fg-body, #3a3731); }
+
+.cart-item__qty {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+.cart-item__qty-btn {
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border-strong, #cfc8b8);
+  border-radius: var(--radius-full, 999px);
+  color: var(--fg, #1a1815);
+  font-size: 16px;
+  line-height: 1;
+  transition: background var(--dur-sm, 180ms) var(--ease-out, ease),
+              border-color var(--dur-sm, 180ms) var(--ease-out, ease),
+              color var(--dur-sm, 180ms) var(--ease-out, ease);
+}
+.cart-item__qty-btn:hover {
+  background: var(--accent, #a85e3a);
+  border-color: var(--accent, #a85e3a);
+  color: var(--accent-fg, #fff);
+}
+.cart-item__qty-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.cart-item__qty-value {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-full, 999px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  font-size: var(--fs-sm, 14px);
+}
+
+.cart-item__price {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg, #1a1815);
+}
+
+.cart-item__remove {
+  justify-self: end;
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--fg-subtle, #9a958c);
+  font-size: 22px;
+  line-height: 1;
+  border-radius: var(--radius-full, 999px);
+  transition: color var(--dur-sm, 180ms) var(--ease-out, ease),
+              background var(--dur-sm, 180ms) var(--ease-out, ease);
+}
+.cart-item__remove:hover {
+  color: var(--critical, #9b4a35);
+  background: var(--critical-soft, #f2ddd5);
+}
+
+/* ── Summary ────────────────────────────────────── */
+.cart-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4, 16px);
+  margin-bottom: var(--space-5, 24px);
+}
+.cart-summary__card {
+  background: var(--bg-sunken, #f5f1e8);
+  border: 1px solid var(--border, #e4ded1);
+  border-radius: var(--radius-lg, 10px);
+  padding: var(--space-4, 16px) var(--space-5, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+.cart-summary__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4, 16px);
+  font-size: var(--fs-sm, 14px);
+  color: var(--fg-body, #3a3731);
+}
+.cart-summary__row > span:last-child {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--fg, #1a1815);
+}
+.cart-summary__row--total {
+  padding-top: var(--space-3, 12px);
+  border-top: 1px solid var(--border, #e4ded1);
+  font-size: var(--fs-md, 18px);
+}
+.cart-summary__row--total > span { font-weight: 600; color: var(--fg, #1a1815); }
+
+/* ── Promo ──────────────────────────────────────── */
+.cart-promo { margin-bottom: var(--space-5, 24px); }
+.cart-promo__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs, 12px);
+  letter-spacing: var(--tracking-wide, 0.04em);
+  text-transform: uppercase;
+  color: var(--fg-muted, #6b6760);
+  margin-bottom: var(--space-2, 8px);
+}
+.cart-promo__row {
+  display: flex;
+  gap: var(--space-2, 8px);
+  align-items: stretch;
+}
+.cart-promo__input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  padding: 12px 16px;
+  background: var(--bg, #fff);
+  border: 1px solid var(--border-strong, #cfc8b8);
+  border-radius: var(--radius-md, 6px);
+  color: var(--fg, #1a1815);
+  transition: border-color var(--dur-sm, 180ms) var(--ease-out, ease);
+}
+.cart-promo__input:focus {
+  outline: none;
+  border-color: var(--accent, #a85e3a);
+}
+.cart-promo__btn {
+  flex: none;
+  font: inherit;
+  font-weight: 500;
+  padding: 12px 20px;
+  background: var(--accent, #a85e3a);
+  color: var(--accent-fg, #fff);
+  border: 0;
+  border-radius: var(--radius-md, 6px);
+  transition: background var(--dur-sm, 180ms) var(--ease-out, ease);
+}
+.cart-promo__btn:hover { background: var(--accent-hover, #7a4125); }
+
+/* ── CTAs ───────────────────────────────────────── */
+.cart-cta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3, 12px);
+  margin-top: var(--space-5, 24px);
+}
+.cart-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 var(--space-5, 24px);
+  font: inherit;
+  font-weight: 500;
+  font-size: var(--fs-md, 18px);
+  text-align: center;
+  text-decoration: none;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  cursor: pointer;
+  transition: background var(--dur-sm, 180ms) var(--ease-out, ease),
+              transform var(--dur-sm, 180ms) var(--ease-out, ease);
+}
+.cart-cta__btn:hover { transform: translateY(-1px); }
+.cart-cta__btn--dark {
+  background: var(--ink-00, #1a1815);
+  color: var(--paper-00, #fff);
+}
+.cart-cta__btn--dark:hover { background: var(--ink-01, #3a3731); color: var(--paper-00, #fff); text-decoration: none; }
+.cart-cta__btn--primary {
+  background: var(--accent, #a85e3a);
+  color: var(--accent-fg, #fff);
+}
+.cart-cta__btn--primary:hover { background: var(--accent-hover, #7a4125); color: var(--accent-fg, #fff); text-decoration: none; }
+input.cart-cta__btn { -webkit-appearance: none; appearance: none; }
+
+/* ── Empty state ────────────────────────────────── */
+.cart-empty {
+  text-align: center;
+  padding: var(--space-7, 48px) 0;
+}
+.cart-empty[hidden] { display: none; }
+.cart-empty__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg, 22px);
+  color: var(--fg-muted, #6b6760);
+  margin: 0 0 var(--space-5, 24px);
+}
+.cart-empty__cta { display: inline-flex; min-width: 220px; }
+
+/* ── Visually hidden (a11y) ─────────────────────── */
+.cart-section .visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── Mobile (< 768px) — stacked cards ───────────── */
+@media (max-width: 767px) {
+  .cart-items__head { display: none; }
+
+  .cart-item {
+    grid-template-columns: 70px 1fr 28px;
+    grid-template-areas:
+      "thumb info  remove"
+      "thumb size  size"
+      "qty   qty   price";
+    gap: var(--space-2, 8px) var(--space-3, 12px);
+  }
+
+  /* Flatten .cart-item__product so its children occupy grid cells directly. */
+  .cart-item__product { display: contents; }
+  .cart-item__product > .cart-item__thumb { grid-area: thumb; }
+  .cart-item__product > .cart-item__info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cart-item__size {
+    grid-area: size;
+    font-size: var(--fs-xs, 12px);
+    color: var(--fg-muted, #6b6760);
+  }
+  .cart-item__size::before {
+    content: attr(data-cell-label) ': ';
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide, 0.04em);
+    color: var(--fg-subtle, #9a958c);
+    margin-right: 4px;
+  }
+
+  .cart-item__qty   { grid-area: qty;    justify-self: start; }
+  .cart-item__price { grid-area: price;  justify-self: end; align-self: center; }
+  .cart-item__remove{ grid-area: remove; align-self: start; }
+
+  .cart-summary    { grid-template-columns: 1fr; }
+  .cart-cta        { grid-template-columns: 1fr; }
+  .cart-promo__row { flex-direction: column; }
+  .cart-promo__btn { width: 100%; }
+}
+{% endstylesheet %}
+
+{% javascript %}
+(function () {
+  const root = document.querySelector('[data-cart-section]');
+  if (!root) return;
+
+  const form         = root.querySelector('[data-cart-form]');
+  const itemsWrap    = root.querySelector('[data-cart-items]');
+  const emptyEl      = root.querySelector('[data-cart-empty]');
+  const subtotalEl   = root.querySelector('[data-subtotal]');
+  const totalEl      = root.querySelector('[data-total]');
+  const discountEl   = root.querySelector('[data-discount]');
+  const deliveryEl   = root.querySelector('[data-delivery]');
+  const promoInput   = root.querySelector('[data-promo-input]');
+  const promoBtn     = root.querySelector('[data-promo-apply]');
+
+  const deliveryCents = parseInt(root.dataset.deliveryCents, 10) || 0;
+  let   discountCents = parseInt(root.dataset.discountCents, 10) || 0;
+
+  // Naive money formatter — uses US-style "$X.XX". Shopify's full money_format
+  // can include locale-specific symbols; this matches the design spec.
+  function formatMoney(cents) {
+    const sign = cents < 0 ? '-' : '';
+    const abs = Math.abs(cents);
+    return sign + '$' + (abs / 100).toFixed(2);
+  }
+
+  function setText(el, val) { if (el) el.textContent = val; }
+
+  function recomputeTotals(itemsSubtotalCents) {
+    setText(subtotalEl, formatMoney(itemsSubtotalCents));
+    setText(deliveryEl, formatMoney(deliveryCents));
+    setText(discountEl, formatMoney(discountCents));
+    setText(totalEl, formatMoney(itemsSubtotalCents + deliveryCents - discountCents));
+  }
+
+  function applyCartResponse(cart) {
+    // Update each row's line price + qty from authoritative server state.
+    cart.items.forEach(function (serverItem) {
+      const row = itemsWrap.querySelector('[data-cart-item][data-key="' + serverItem.key + '"]');
+      if (!row) return;
+      const qtyEl   = row.querySelector('[data-qty-value]');
+      const priceEl = row.querySelector('[data-line-price]');
+      if (qtyEl)   qtyEl.textContent   = serverItem.quantity;
+      if (priceEl) priceEl.textContent = formatMoney(serverItem.final_line_price);
+    });
+    recomputeTotals(cart.items_subtotal_price);
+    if (cart.item_count === 0) showEmpty();
+  }
+
+  function showEmpty() {
+    if (form)    form.hidden = true;
+    if (emptyEl) emptyEl.hidden = false;
+  }
+
+  function changeQuantity(key, quantity) {
+    return fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ id: key, quantity: quantity })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('Cart update failed: ' + r.status);
+      return r.json();
+    });
+  }
+
+  function removeRow(row) {
+    row.classList.add('cart-item--removing');
+    setTimeout(function () { row.remove(); }, 260);
+  }
+
+  // ── Quantity + remove handlers (delegated) ──
+  itemsWrap && itemsWrap.addEventListener('click', function (e) {
+    const row = e.target.closest('[data-cart-item]');
+    if (!row) return;
+    const key = row.dataset.key;
+
+    if (e.target.matches('[data-qty-increment], [data-qty-decrement], [data-remove]')) {
+      const buttons = row.querySelectorAll('button');
+      buttons.forEach(function (b) { b.disabled = true; });
+
+      const currentQty = parseInt(row.querySelector('[data-qty-value]').textContent, 10) || 0;
+      let newQty;
+      if (e.target.matches('[data-remove]')) {
+        newQty = 0;
+      } else if (e.target.matches('[data-qty-increment]')) {
+        newQty = currentQty + 1;
+      } else {
+        newQty = Math.max(0, currentQty - 1);
+      }
+
+      changeQuantity(key, newQty)
+        .then(function (cart) {
+          if (newQty === 0) removeRow(row);
+          applyCartResponse(cart);
+        })
+        .catch(function (err) {
+          console.error(err);
+          buttons.forEach(function (b) { b.disabled = false; });
+        });
+    }
+  });
+
+  // ── Promo: redirect to /checkout?discount=CODE ──
+  function applyPromo() {
+    const code = (promoInput && promoInput.value || '').trim();
+    if (!code) { promoInput && promoInput.focus(); return; }
+    window.location.href = '/checkout?discount=' + encodeURIComponent(code);
+  }
+  promoBtn && promoBtn.addEventListener('click', applyPromo);
+  promoInput && promoInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); applyPromo(); }
+  });
+})();
+{% endjavascript %}
 
 {% schema %}
 {
   "name": "t:general.cart",
-  "settings": []
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "My Shopping Cart"
+    },
+    {
+      "type": "number",
+      "id": "delivery_fee",
+      "label": "Delivery fee (in store currency, whole units)",
+      "default": 20
+    }
+  ]
 }
 {% endschema %}
