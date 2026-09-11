@@ -147,12 +147,7 @@
           <a href="{{ routes.all_products_collection_url }}" class="cart-cta__btn cart-cta__btn--dark">
             {{ 'cart.back_to_shop' | t | default: 'Back to Shop' }}
           </a>
-          {% render 'checkout-gate',
-             return_url: '/checkout',
-             label: 'cart.checkout' | t,
-             as: 'input',
-             name: 'checkout',
-             class: 'cart-cta__btn cart-cta__btn--primary' %}
+          {% render 'checkout-gate', return_url: '/checkout', label: 'cart.checkout', as: 'input', name: 'checkout', class: 'cart-cta__btn cart-cta__btn--primary' %}
         </div>
       </form>
     {%- endif -%}
@@ -631,3 +626,20 @@ input.cart-cta__btn { -webkit-appearance: none; appearance: none; }
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'checkout-gate',
+                 return_url: '/checkout',
+                 label: 'cart.checkout' | t,
+                 as: 'input',
+                 name: 'checkout',
+                 class: 'cart-cta__btn cart-cta__btn--primary' %}
+  to: "{% render 'checkout-gate', return_url: '/checkout', label: 'cart.checkout',
+    as: 'input', name: 'checkout', class: 'cart-cta__btn cart-cta__btn--primary' %}"
+  position: 6477..6632
+{% endcomment %}
